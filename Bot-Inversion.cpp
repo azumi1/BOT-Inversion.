@@ -88,6 +88,7 @@ string especificacionesDeAPIS[51] = {
     "Debe ser la API de serie historica.",
     "Debe ser la API principal del token/autenticacion del usuario."
 };
+string codigos[10] = {"es", "en", "pt", "fr", "de", "it", "zh", "ru", "ja", "ko"};  //Constante de valores para configurar el idioma.
 
 FILE* listApis;                 //Archivo para guardar todas las apis de las paguinas web que el usuario aya cargado para operar en ellas.
 FILE* configurar;               //Archivo para guardar la configuracion deseada por el usuario.
@@ -376,13 +377,12 @@ void gestionarApis(FILE** g, apisWeb* lista){
     string msg;
 
     do{
-        msg =
-        "\n====== GESTION DE APIs ======\n"     //Muestra el menu de opciones para gestionar las apis.
-        "1. Agregar APIs\n"
-        "2. Modificar APIs\n"
-        "3. Eliminar APIs\n"
-        "4. Volver\n"
-        "\nOpcion: ";
+        msg = "\n====== GESTION DE APIs ======\n"     //Muestra el menu de opciones para gestionar las apis.
+                "1. Agregar APIs\n"
+                "2. Modificar APIs\n"
+                "3. Eliminar APIs\n"
+                "4. Volver\n"
+                "\nOpcion: ";
 
         msg = traduccion(config, &msg);
         cout << msg;
@@ -427,283 +427,449 @@ void gestionarApis(FILE** g, apisWeb* lista){
         }
     }while(op != 4);
 }
-//===============================================================================
-// Se han modificado y completado hasta el modulo 13, se deben seguir modificando
-// y completando (o directamente desarrollar) los modulos del 14 en adelante.
-// Este comentario solo se usa como marca par determinar hasta donde se hizo y
-// desde donde se debe seguir por lo que si se avanza de debe cambiar de lugar 
-// y modificar (o borrar si es que ya se termino).
-//===============================================================================
 
-//##### Modulo 14, #####
+//##### Modulo 14. #####
+//Menu para configurar el idioma del programa.
 void configurarIdioma(configuracion *conf){
     int op;
     string msg;
 
-    msg = "\n====== CONFIGURAR IDIOMA ======";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
+    msg = "\n====== CONFIGURACION DE IDIOMA ======\n"     //Muestra el menu de opciones disponibles
+          "1. Español.\n"                                //para configurar el idioma del programa.
+          "2. Ingles.\n"
+          "3. Portugues.\n"
+          "4. Frances.\n"
+          "5. Aleman.\n"
+          "6. Italiano.\n"
+          "7. Chino.\n"
+          "8. Ruso.\n"
+          "9. Japones.\n"
+          "10. Coreano.\n"
+          "11. Volver.\n"
+          "\nOpcion: ";
 
-    msg = "1. Espanol";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
-
-    msg = "2. Ingles";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
-
-    msg = "3. Portugues";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
-
-    msg = "4. Frances";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
-
-    msg = "5. Aleman";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
-
-    msg = "6. Italiano";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
-
-    msg = "7. Chino";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
-
-    msg = "8. Ruso";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
-
-    msg = "9. Japones";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
-
-    msg = "10. Coreano";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
-
-    msg = "11. Volver";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
-
-    msg = "Opcion: ";
-    msg = traduccion(config, &msg);
-    cout << msg;
-    cin >> op;
-
-    switch (op) {
-        case 1:
-            conf->idioma = "es";
-            break;
-        case 2:
-            conf->idioma = "en";
-            break;
-        case 3:
-            conf->idioma = "pt";
-            break;
-        case 4:
-            conf->idioma = "fr";
-            break;
-        case 5:
-            conf->idioma = "de";
-            break;
-        case 6:
-            conf->idioma = "it";
-            break;
-        case 7:
-            conf->idioma = "zh"; 
-            break;
-        case 8:
-            conf->idioma = "ru"; 
-            break;
-        case 9:
-            conf->idioma = "ja"; 
-            break;
-        case 10:
-            conf->idioma = "ko"; 
-            break;
-        case 11:
-            return;
-        default:
-            msg = "Opcion invalida";
-            msg = traduccion(*conf, &msg);
-            cout << msg << endl;
-            return;
-    }
-
-    msg = "Idioma configurado correctamente";
     msg = traduccion(*conf, &msg);
-    cout << msg << endl;
+    cout << msg;
+
+    cin >> op;                                           //Pide seleccionar una opcion del menu.
+
+    if(cin.fail()){                                      //Verifica que el dato ingresado sea valido.
+        cin.clear();                                     //Limpia el estado de error de cin.
+        cin.ignore(1000, '\n');                          //Limpia el buffer de entrada.
+        msg = "Entrada invalida.\n";
+        msg = traduccion(*conf, &msg);
+        cout << msg;
+
+    }else{
+        cin.ignore(1000, '\n');                          //Limpia el buffer despues de una entrada valida.
+
+        if(op >= 1 && op <= 10){                         //Si la opcion corresponde a un idioma valido,                                
+            conf->idioma = codigos[op - 1];              //configura el idioma seleccionado.
+            msg = "Idioma configurado correctamente.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+        }else{
+            if(op == 11){                                //La opcion 11 vuelve al menu anterior.
+                msg = "Volviendo...\n";
+                msg = traduccion(*conf, &msg);
+                cout << msg;
+            }else{                                       //Si la opcion no existe muestra error.
+                msg = "Opcion invalida.\n";
+                msg = traduccion(*conf, &msg);
+                cout << msg;
+            }
+        }
+    }
 }
 
-//##### Modulo . #####
+//##### Modulo 15. #####
+//Configura el tiempo de espera del bot entre operaciones.
 void configurarTiempo(configuracion *conf){
     string msg;
 
-    msg = "Tiempo del bot (segundos): ";
-    msg = traduccion(config, &msg);
+    msg = "Tiempo del bot (segundos): ";      //Pide el tiempo de espera del bot en segundos.
+    msg = traduccion(*conf, &msg);
     cout << msg;
     cin >> conf->tiempoBot;
-    msg = "Tiempo configurado correctamente";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
+
+    if(cin.fail()){                           //Verifica que el dato ingresado sea valido.
+        cin.clear();                          //Limpia el estado de error de cin.
+        cin.ignore(1000, '\n');               //Limpia el buffer de entrada.
+        msg = "Entrada invalida.\n";
+        msg = traduccion(*conf, &msg);
+        cout << msg;
+    }else{
+        cin.ignore(1000, '\n');               //Limpia el buffer despues de una entrada valida.
+
+        if(conf->tiempoBot > 0){              //Verifica que el tiempo ingresado sea mayor a cero.
+            msg = "Tiempo configurado correctamente.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+        }else{
+            msg = "El tiempo debe ser mayor a cero.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+        }
+    }
 }
 
-//##### Modulo . #####
+//##### Modulo 16. #####
+//Configura el modo debug del programa.
 void configurarDebug(configuracion *conf){
     int op;
     string msg;
 
-    msg = "Activar debug? (1=Si / 0=No): ";
-    msg = traduccion(config, &msg);
+    msg = "Activar debug? (1=Si / 0=No): ";   //Pregunta si se desea activar el modo debug.
+    msg = traduccion(*conf, &msg);
     cout << msg;
     cin >> op;
-    conf->debugin = (op == 1);
-    msg = "Debug configurado correctamente";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
+
+    if(cin.fail()){                           //Verifica que el dato ingresado sea valido.
+        cin.clear();                          //Limpia el estado de error de cin.
+        cin.ignore(1000, '\n');               //Limpia el buffer de entrada.
+        msg = "Entrada invalida.\n";
+        msg = traduccion(*conf, &msg);
+        cout << msg;
+    }else{
+        cin.ignore(1000, '\n');               //Limpia el buffer despues de una entrada valida.
+
+        if(op == 0 || op == 1){               //Verifica que la opcion sea valida.
+            conf->debugin = (op == 1);        //Activa o desactiva el modo debug.
+            msg = "Debug configurado correctamente.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+        }else{
+            msg = "Opcion invalida.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+        }
+    }
 }
 
-//##### Modulo . #####
+//##### Modulo 17. #####
+//Configura el porcentaje de riesgo permitido para operar.
 void configurarRiesgo(configuracion *conf){
     string msg;
 
-    msg = "Ingrese riesgo (ej: 0.1): ";
-    msg = traduccion(config, &msg);
+    msg = "Ingrese riesgo (ej: 0.1): ";   //Pide el porcentaje de riesgo deseado.
+    msg = traduccion(*conf, &msg);
     cout << msg;
     cin >> conf->riesgo;
-    msg = "Riesgo configurado correctamente";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
+
+    if(cin.fail()){                       //Verifica que el dato ingresado sea valido.
+        cin.clear();                      //Limpia el estado de error de cin.
+        cin.ignore(1000, '\n');           //Limpia el buffer de entrada.
+        msg = "Entrada invalida.\n";
+        msg = traduccion(*conf, &msg);
+        cout << msg;
+
+    }else{
+        cin.ignore(1000, '\n');           //Limpia el buffer despues de una entrada valida.
+
+        if(conf->riesgo > 0){             //Verifica que el riesgo sea mayor a cero.
+            msg = "Riesgo configurado correctamente.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+
+        }else{
+            msg = "El riesgo debe ser mayor a cero.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+        }
+    }
 }
 
-//##### Modulo . #####
+//##### Modulo 18. #####
+//Configura el limite de perdida permitido por operacion.
 void configurarStopLoss(configuracion *conf){
     string msg;
 
-    msg = "Ingrese Stop Loss (ej: 0.05): ";
-    msg = traduccion(config, &msg);
+    msg = "Ingrese Stop Loss (ej: 0.05): "; //Pide el porcentaje maximo de perdida permitido.
+    msg = traduccion(*conf, &msg);
     cout << msg;
     cin >> conf->stopLoss;
-    msg = "Stop Loss configurado correctamente";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
+
+    if(cin.fail()){                         //Verifica que el dato ingresado sea valido.
+        cin.clear();                        //Limpia el estado de error de cin.
+        cin.ignore(1000, '\n');             //Limpia el buffer de entrada.
+        msg = "Entrada invalida.\n";
+        msg = traduccion(*conf, &msg);
+        cout << msg;
+    }else{
+        cin.ignore(1000, '\n');             //Limpia el buffer despues de una entrada valida.
+
+        if(conf->stopLoss > 0){             //Verifica que el Stop Loss sea mayor a cero.
+            msg = "Stop Loss configurado correctamente.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+
+        }else{
+            msg = "El Stop Loss debe ser mayor a cero.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+        }
+    }
 }
 
-//##### Modulo . #####
+//##### Modulo 19. #####
+//Configura el objetivo de ganancia por operacion.
 void configurarTakeProfit(configuracion *conf){
     string msg;
 
-    msg = "Ingrese Take Profit (ej: 0.1): ";
-    msg = traduccion(config, &msg);
+    msg = "Ingrese Take Profit (ej: 0.1): "; //Pide el porcentaje de ganancia objetivo.
+    msg = traduccion(*conf, &msg);
     cout << msg;
     cin >> conf->takeProfit;
-    msg = "Take Profit configurado correctamente";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
+
+    if(cin.fail()){                          //Verifica que el dato ingresado sea valido.
+        cin.clear();                         //Limpia el estado de error de cin.
+        cin.ignore(1000, '\n');              //Limpia el buffer de entrada.
+        msg = "Entrada invalida.\n";
+        msg = traduccion(*conf, &msg);
+        cout << msg;
+    }else{
+        cin.ignore(1000, '\n');              //Limpia el buffer despues de una entrada valida.
+
+        if(conf->takeProfit > 0){            //Verifica que el Take Profit sea mayor a cero.
+            msg = "Take Profit configurado correctamente.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+
+        }else{
+            msg = "El Take Profit debe ser mayor a cero.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+        }
+    }
 }
 
-//##### Modulo . #####
+//##### Modulo 20. #####
+//Configura la comision que se descontara en cada operacion realizada.
 void configurarComision(configuracion *conf){
     string msg;
 
     msg = "Ingrese comision (ej: 0.01): ";
-    msg = traduccion(config, &msg);
+    msg = traduccion(*conf, &msg);
     cout << msg;
     cin >> conf->comision;
-    msg = "Comision configurada correctamente";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
+
+    if(cin.fail()){                               //Verifica que el valor ingresado sea numerico.
+        cin.clear();
+        cin.ignore(1000, '\n');
+        msg = "Entrada invalida.\n";
+        msg = traduccion(*conf, &msg);
+        cout << msg;
+    }else{
+        cin.ignore(1000, '\n');
+        msg = "Comision configurada correctamente.\n";
+        msg = traduccion(*conf, &msg);
+        cout << msg;
+    }
 }
 
-//##### Modulo . #####
+//##### Modulo 21. #####
+//Configura si el bot debe operar automaticamente o manualmente.
 void configurarModoAutomatico(configuracion *conf){
     int op;
     string msg;
 
     msg = "Modo automatico? (1=Si / 0=No): ";
-    msg = traduccion(config, &msg);
+    msg = traduccion(*conf, &msg);
     cout << msg;
     cin >> op;
-    conf->modoAutomatico = (op == 1);
-    msg = "Modo automatico configurado";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
+
+    if(cin.fail()){                               //Verifica que se ingrese un valor valido.
+        cin.clear();
+        cin.ignore(1000, '\n');
+        msg = "Entrada invalida.\n";
+        msg = traduccion(*conf, &msg);
+        cout << msg;
+    }else{
+        cin.ignore(1000, '\n');
+
+        if(op == 1 || op == 0){                   //Configura el modo automatico.
+            conf->modoAutomatico = (op == 1);
+            msg = "Modo automatico configurado correctamente.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+        }else{
+            msg = "Opcion invalida.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+        }
+    }
 }
 
-//##### Modulo . #####
+//##### Modulo 22. #####
+//Guarda la configuracion actual del programa en el archivo config.dat.
 void guardarConfiguracion(configuracion *conf, FILE** g){
     string msg;
 
     *g = fopen("config.dat", "wb");
 
-    if (*g == NULL) {
-        msg = "Error al guardar configuracion";
+    if(*g == NULL){                               //Verifica que el archivo pueda abrirse correctamente.
+        msg = "Error al guardar configuracion.\n";
         msg = traduccion(*conf, &msg);
-        cout << msg << endl;
+        cout << msg;
         return;
     }
 
-    fwrite(conf, sizeof(configuracion), 1, *g);
+    fwrite(conf, sizeof(configuracion), 1, *g);  //Guarda la configuracion en el archivo.
     fclose(*g);
-
-    msg = "Configuracion guardada correctamente";
+    msg = "Configuracion guardada correctamente.\n";
     msg = traduccion(*conf, &msg);
-    cout << msg << endl;
+    cout << msg;
 }
 
-//##### Modulo . #####
+//##### Modulo 23. #####
+//Carga los valores de configuracion por defecto.
+void cargarConfiguracionPorDefecto(configuracion *conf){
+    conf->idioma = "es";
+    conf->tiempoBot = 15;
+    conf->debugin = false;
+    conf->riesgo = 0.1;
+    conf->stopLoss = 0.05;
+    conf->takeProfit = 0.1;
+    conf->comision = 0.01;
+    conf->gananciaMinima = 0.02;
+    conf->modoAutomatico = false;
+}
+
+//##### Modulo 24. #####
+//Carga la configuracion guardada desde el archivo config.dat.
 void cargarConfiguracion(configuracion *conf, FILE** g){
+    size_t leidos;
     string msg;
 
     *g = fopen("config.dat", "rb");
 
-    if (*g == NULL) {
-        msg = "No hay configuracion previa, usando valores por defecto";
+    if(*g == NULL){                                           //Si no existe el archivo crea una configuracion por defecto.
+        msg = "No hay configuracion previa, usando valores por defecto.\n";
         msg = traduccion(*conf, &msg);
-        cout << msg << endl;
-        conf->idioma = "es";
-        conf->tiempoBot = 15;
-        conf->debugin = false;
-        conf->riesgo = 0.1;
-        conf->stopLoss = 0.05;
-        conf->takeProfit = 0.1;
-        conf->comision = 0.01;
-        conf->gananciaMinima = 0.02;
-        conf->modoAutomatico = false;
+        cout << msg;
+        cargarConfiguracionPorDefecto(conf);
         guardarConfiguracion(conf, g);
         return;
     }
 
-    size_t leidos = fread(conf, sizeof(configuracion), 1, *g);
+    leidos = fread(conf, sizeof(configuracion), 1, *g);
 
-    if (leidos != 1) {
-        msg = "Error al leer configuracion, usando valores por defecto";
-        msg = traduccion(*conf, &msg);
-        cout << msg << endl;
+    if(leidos != 1){                                          //Si ocurre un error de lectura carga valores por defecto.
         fclose(*g);
-        conf->idioma = "es";
-        conf->tiempoBot = 15;
-        conf->debugin = false;
-        conf->riesgo = 0.1;
-        conf->stopLoss = 0.05;
-        conf->takeProfit = 0.1;
-        conf->comision = 0.01;
-        conf->gananciaMinima = 0.02;
-        conf->modoAutomatico = false;
+        msg = "Error al leer configuracion, usando valores por defecto.\n";
+        msg = traduccion(*conf, &msg);
+        cout << msg;
+        cargarConfiguracionPorDefecto(conf);
         guardarConfiguracion(conf, g);
         return;
     }
 
     fclose(*g);
-    msg = "Configuracion cargada correctamente";
+    msg = "Configuracion cargada correctamente.\n";
     msg = traduccion(*conf, &msg);
-    cout << msg << endl;
+    cout << msg;
 }
 
-//##### Modulo . #####
+//##### Modulo 25. #####
+//Menu principal de configuracion del programa.
+void menuConfiguracion(){
+    int op;
+    string msg;
+
+    do{
+        msg =
+        "\n=========== CONFIGURACION ===========\n"
+        "1. Gestionar APIs.\n"
+        "2. Idioma.\n"
+        "3. Tiempo del bot.\n"
+        "4. Debug.\n"
+        "5. Riesgo.\n"
+        "6. Stop Loss.\n"
+        "7. Take Profit.\n"
+        "8. Comision.\n"
+        "9. Modo automatico.\n"
+        "10. Guardar configuracion.\n"
+        "11. Volver.\n"
+        "\nOpcion: ";
+
+        msg = traduccion(config, &msg);
+        cout << msg;
+        cin >> op;
+
+        if(cin.fail()){                                    //Verifica que la opcion ingresada sea valida.
+            cin.clear();
+            cin.ignore(1000, '\n');
+            msg = "Entrada invalida.\n";
+            msg = traduccion(config, &msg);
+            cout << msg;
+            op = 0;
+        }else{
+            cin.ignore(1000, '\n');
+
+            switch(op){
+                case 1:
+                    gestionarApis(&listApis, listaApis);
+                    break;
+
+                case 2:
+                    configurarIdioma(&config);
+                    break;
+
+                case 3:
+                    configurarTiempo(&config);
+                    break;
+
+                case 4:
+                    configurarDebug(&config);
+                    break;
+
+                case 5:
+                    configurarRiesgo(&config);
+                    break;
+
+                case 6:
+                    configurarStopLoss(&config);
+                    break;
+
+                case 7:
+                    configurarTakeProfit(&config);
+                    break;
+
+                case 8:
+                    configurarComision(&config);
+                    break;
+
+                case 9:
+                    configurarModoAutomatico(&config);
+                    break;
+
+                case 10:
+                    guardarConfiguracion(&config, &configurar);
+                    break;
+
+                case 11:
+                    msg = "Volviendo...\n";
+                    msg = traduccion(config, &msg);
+                    cout << msg;
+                    break;
+
+                default:
+                    msg = "Opcion invalida.\n";
+                    msg = traduccion(config, &msg);
+                    cout << msg;
+            }
+        }
+    }while(op != 11);
+}
+//===============================================================================
+// Se han modificado y completado hasta el modulo 25, se deben seguir modificando
+// y completando (o directamente desarrollar) los modulos del 26 en adelante.
+// Este comentario solo se usa como marca par determinar hasta donde se hizo y
+// desde donde se debe seguir por lo que si se avanza de debe cambiar de lugar 
+// y modificar (o borrar si es que ya se termino).
+//===============================================================================
+
+//##### Modulo 26. #####
 void inicializarSistema(configuracion *conf, FILE** g, FILE** f, apisWeb* lista){
     string msg;
     int seleccion;
@@ -1236,112 +1402,6 @@ void verOperaciones(){
 
     msg = "==========================================";
     cout << traduccion(config, &msg) << endl;
-}
-
-//##### Modulo . #####
-void menuConfiguracion(){
-    int op;
-    string msg;
-
-    do {
-        msg = "\n=========== CONFIGURACION ==========\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "1. Gestionar APIs\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "2. Idioma\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "3. Tiempo bot\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "4. Debug\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "5. Riesgo\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "6. Stop Loss\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "7. Take Profit\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "8. Comision\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "9. Modo automatico\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "10. Guardar configuracion\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "11. Volver\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "Opcion: ";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        cin >> op;
-
-        switch (op) {
-            case 1: 
-                gestionarApis(&listApis, listaApis); 
-                break;
-            case 2: 
-                configurarIdioma(&config);  
-                break;
-            case 3: 
-                configurarTiempo(&config); 
-                break;
-            case 4: 
-                configurarDebug(&config); 
-                break;
-            case 5: 
-                configurarRiesgo(&config); 
-                break;
-            case 6: 
-                configurarStopLoss(&config); 
-                break;
-            case 7: 
-                configurarTakeProfit(&config); 
-                break;
-            case 8: 
-                configurarComision(&config); 
-                break;
-            case 9: 
-                configurarModoAutomatico(&config); 
-                break;
-            case 10: 
-                guardarConfiguracion(&config, &configurar); 
-                break;
-            case 11:
-                msg = "Volviendo...\n";
-                msg = traduccion(config, &msg);
-                cout << msg;
-                break;
-
-            default:
-                msg = "Opcion invalida\n";
-                msg = traduccion(config, &msg);
-                cout << msg;
-        }
-
-    } while (op != 11);
 }
 
 //##### Modulo . #####
