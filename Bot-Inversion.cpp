@@ -31,6 +31,16 @@ struct configuracion{               //Registro donde se guardan los datos de con
     bool modoAutomatico;
 };
 
+struct TART{                        //Registro para almacenar el token de validacion y de refresh.
+    string token;
+    string refreshToken;
+};
+
+struct usuarios{                    //Registro para almacenar los datos de inicio de secion del usuario.
+    string name;
+    string contraseña;
+};
+
 //===== variables y constantes globales =====
 int cantidades[10] = {1, 1, 3, 5, 1, 11, 6, 1, 21, 1};          //Constantes de opciones disponibles para oprear.
 string nombresLargos[10] = {"Asesores", "AsesoresOperar", "TestInversor", "MiCuenta", "Notificacion", "Operar", 
@@ -94,11 +104,10 @@ FILE* listApis;                 //Archivo para guardar todas las apis de las pag
 FILE* configurar;               //Archivo para guardar la configuracion deseada por el usuario.
 struct apisWeb listaApis[1000]; //Arreglo para levantar los dato del archivo de apis y no operar sobre este.
 configuracion config;           //Variable para levantar los datos de configuracion del archivo y no trabajar sobre este.
-string token;
-string refreshToken;            //token y refreshToken son para guardar las claves de validacion de acciones para operar en las distintas webs.
-string usuario;
-string password;                //Datos del usuario para el inicio de secion.
-int indice;        //indice del lugar donde se almacena en el registro la api deseada para una operacion dada.
+TART tokenRefreshToken;         //token y refreshToken son para guardar las claves de validacion de acciones para operar en las distintas webs.
+usuarios usuario;               //Datos del usuario para el inicio de secion.
+int indice;                     //indice del lugar donde se almacena en el registro la api deseada para una operacion dada.
+string simbolo;                 //Simbolo del activo con el que se va a operar.
 
 //##### Modulo 2. #####
 //Verifica si existen apis caragadas en el programa viendo si existe el archivo donde estas se guardan y si no esta vacio.
@@ -861,236 +870,701 @@ void menuConfiguracion(){
         }
     }while(op != 11);
 }
-//===============================================================================
-// Se han modificado y completado hasta el modulo 25, se deben seguir modificando
-// y completando (o directamente desarrollar) los modulos del 26 en adelante.
-// Este comentario solo se usa como marca par determinar hasta donde se hizo y
-// desde donde se debe seguir por lo que si se avanza de debe cambiar de lugar 
-// y modificar (o borrar si es que ya se termino).
-//===============================================================================
 
 //##### Modulo 26. #####
+//Inicializa el sistema cargando configuracion y APIs.
 void inicializarSistema(configuracion *conf, FILE** g, FILE** f, apisWeb* lista){
-    string msg;
-    int seleccion;
     int cantidad;
-
-    cargarConfiguracion(conf, g);
-    levantarApis(*g);
-    cantidad = 0;
-
-    while (cantidad < 1000 && lista[cantidad].cantApis != 0) {
-        cantidad++;
-    }
-
-    if (cantidad == 0) {
-        msg = "No hay APIs cargadas, debe cargarlas";
-        msg = traduccion(*conf, &msg);
-        cout << msg << endl;
-
-        gestionarApis(f, lista);
-        levantarApis(*f);
-
-        cantidad = 0;
-        while (cantidad < 1000 && lista[cantidad].cantApis != 0) {
-            cantidad++;
-        }
-
-        if (cantidad == 0) {
-            msg = "Error: no se pudieron cargar APIs";
-            msg = traduccion(*conf, &msg);
-            cout << msg << endl;
-            return;
-        }
-    }
-
-    seleccion = seleccionarWeb(cantidad);
-    msg = "Sistema inicializado correctamente";
-    msg = traduccion(*conf, &msg);
-    cout << msg << endl;
-}
-
-//##### Modulo . #####
-string extraerValor(const string& json, const string& clave) {
-    size_t posicionClave = json.find(clave);
-
-    if (posicionClave == string::npos)
-        return "";
-
-    size_t inicioValor = json.find(":", posicionClave);
-    if (inicioValor == string::npos)
-        return "";
-
-    inicioValor = json.find("\"", inicioValor);
-    if (inicioValor == string::npos)
-        return "";
-
-    inicioValor++;
-
-    size_t finValor = json.find("\"", inicioValor);
-    if (finValor == string::npos)
-        return "";
-
-    return json.substr(inicioValor, finValor - inicioValor);
-}
-
-//##### Modulo . #####
-void conseguirToken(string* toke, string* refre){
-    string comando;
-    string access_token;
-    string new_refresh_token;
+    int seleccion;
     string msg;
-    int webActiva;
 
-    webActiva = 0;
-    if (listaApis[webActiva].cantApis == 0) {
-        msg = "No hay APIs cargadas";
-        msg = traduccion(config, &msg);
-        cout << msg << endl;
-        return;
+    cargarConfiguracion(conf, g);                           //Carga la configuracion guardada.
+    levantarApis(*f, lista);                                //Carga las APIs guardadas en memoria.
+    cantidad = cantApis(lista);                             //Obtiene la cantidad de webs cargadas.
+
+    if(cantidad <= 0){                                      //Si no hay APIs cargadas obliga a cargarlas.
+        msg = "No hay APIs cargadas, debe cargarlas.\n";
+        msg = traduccion(*conf, &msg);
+        cout << msg;
+        gestionarApis(f, lista);                            //Abre el menu de gestion de APIs.
+        levantarApis(*f, lista);                            //Recarga las APIs luego de agregarlas.
+        cantidad = cantApis(lista);
+
+        if(cantidad <= 0){                                  //Si sigue sin haber APIs muestra error.
+            msg = "Error: no se pudieron cargar APIs.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+        }
     }
 
-    string endpoint = listaApis[webActiva].apis[
-        listaApis[webActiva].cantApis - 1
-    ];
+    if(cantidad > 0){
+        seleccion = seleccionarWeb(lista);                  //Permite seleccionar la web a utilizar.
 
-    if (endpoint.empty()) {
-        msg = "No se encontró endpoint de token";
-        msg = traduccion(config, &msg);
-        cout << msg << endl;
-        return;
+        if(seleccion != -1){
+            msg = "Sistema inicializado correctamente.\n";
+            msg = traduccion(*conf, &msg);
+            cout << msg;
+        }
     }
+}
+
+//##### Modulo 27. #####
+//Extrae el valor asociado a una clave dentro de un texto JSON.
+string extraerValor(const string& json, const string& clave){
+    size_t posicionClave;
+    size_t inicioValor;
+    size_t finValor;
+
+    posicionClave = json.find(clave);                       //Busca la posicion donde aparece la clave.
+    if(posicionClave == string::npos){                      //Si la clave no existe retorna vacio.
+        return "";
+    }
+
+    inicioValor = json.find(":", posicionClave);            //Busca el separador entre clave y valor.
+    if(inicioValor == string::npos){
+        return "";
+    }
+
+    inicioValor = json.find("\"", inicioValor);             //Busca el inicio del valor entre comillas.
+    if(inicioValor == string::npos){
+        return "";
+    }
+
+    inicioValor++;                                          //Avanza al primer caracter del valor.
+    finValor = json.find("\"", inicioValor);                //Busca el final del valor.
+    if(finValor == string::npos){
+        return "";
+    }
+
+    return json.substr(inicioValor, finValor - inicioValor); //Retorna el valor extraido.
+}
+
+//##### Modulo 28. #####
+//Obtiene el endpoint de autenticacion correspondiente a la web activa.
+string obtenerEndpointToken(int webActiva){
+    if(listaApis[webActiva].cantApis <= 0){                                 //Verifica que la web tenga APIs cargadas.
+        return "";
+    }
+
+    return listaApis[webActiva].apis[listaApis[webActiva].cantApis - 1];    //Retorna la ultima API cargada (endpoint de token).
+}
+
+//##### Modulo 29. #####
+//Ejecuta la peticion HTTP para solicitar el token de autenticacion.
+void ejecutarPeticionToken(string endpoint){
+    string comando;
 
     comando =
-        "curl -s -X POST " + endpoint +
-        " -H \"Content-Type: application/x-www-form-urlencoded\" "
-        "-d \"username=" + usuario +
-        "&password=" + password +
-        "&grant_type=password\" > token.json";
+    "curl -s -X POST " + endpoint +                             //Arma el comando curl para realizar la peticion POST.
+    " -H \"Content-Type: application/x-www-form-urlencoded\" "
+    "-d \"username=" + usuario.name +
+    "&password=" + usuario.contraseña +
+    "&grant_type=password\" > token.json";
 
-    system(comando.c_str());
-
-    ifstream archivo("token.json");
-
-    if (!archivo.is_open()) {
-        msg = "No se pudo abrir token.json";
-        msg = traduccion(config, &msg);
-        cout << msg << endl;
-        return;
-    }
-
-    string respuesta((istreambuf_iterator<char>(archivo)), istreambuf_iterator<char>());
-    archivo.close();
-
-    access_token = extraerValor(respuesta, "access_token");
-    new_refresh_token = extraerValor(respuesta, "refresh_token");
-
-    if (!access_token.empty()) {
-        *toke = access_token;
-        *refre = new_refresh_token;
-
-        msg = "Token obtenido correctamente";
-        msg = traduccion(config, &msg);
-        cout << msg << endl;
-    } else {
-        msg = "Error al obtener token";
-        msg = traduccion(config, &msg);
-        cout << msg << endl;
-
-        msg = "Respuesta:";
-        msg = traduccion(config, &msg);
-        cout << msg << endl << respuesta << endl;
-    }
+    system(comando.c_str());                                    //Ejecuta el comando del sistema.
 }
 
-//##### Modulo . #####
-bool login(const string& usuario, const string& password){
-    string access_token;
-    string refresh_token_local;
-    string msg;
+//##### Modulo 30. #####
+//Lee el archivo token.json y retorna la respuesta completa.
+string leerRespuestaToken(){
+    ifstream archivo;
+    string respuesta;
 
-    conseguirToken(&access_token, &refresh_token_local);
+    archivo.open("token.json");                                                             //Abre el archivo generado por curl.
 
-    if (access_token.empty()) {
-        msg = "Error en login";
-        msg = traduccion(config, &msg);
-        cout << msg << endl;
+    if(!archivo.is_open()){                                                                 //Verifica que el archivo exista.
+        return "";
+    }
+
+    respuesta = string((istreambuf_iterator<char>(archivo)), istreambuf_iterator<char>());  //Lee todo el contenido del archivo.
+    archivo.close();                                                                        //Cierra el archivo.
+
+    return respuesta;                                                                        //Retorna la respuesta JSON.
+}
+
+//##### Modulo 31. #####
+//Guarda los tokens obtenidos dentro de la estructura correspondiente.
+bool guardarTokens(string respuesta, TART* tokenyRefreshToken){
+    string accessToken;
+    string refreshToken;
+
+    accessToken = extraerValor(respuesta, "access_token");      //Extrae el access token del JSON.
+    refreshToken = extraerValor(respuesta, "refresh_token");    //Extrae el refresh token del JSON.
+
+    if(accessToken.empty()){                                    //Verifica que el token exista.
         return false;
     }
 
-    token = access_token;
-    refresh = refresh_token_local;
+    tokenyRefreshToken->token = accessToken;                    //Guarda el access token.
+    tokenyRefreshToken->refreshToken = refreshToken;            //Guarda el refresh token.
 
-    msg = "Login exitoso";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
-
-    return true;
+    return true;                                                //Confirma guardado correcto.
 }
 
-//##### Modulo . #####
-string get(int indiceApi, apisWeb *lista[100]){
-    //recibe como parametro el indice de la api deseada y el listado de apis y hace la consulta deseada (ya sea de la cuenta, activos, etc)
-    string msg;
-    string comando;
+//##### Modulo 32. #####
+//Obtiene el token y refresh token desde la API de autenticacion.
+void conseguirToken(TART* tokenyRefreshToken){
     string endpoint;
+    string respuesta;
+    string msg;
+    int webActiva;
 
-    if (indiceApi < 0 || indiceApi >= lista.cantApis) {
-        msg = "Indice de API invalido";
+    webActiva = 0;                                              //Selecciona la web activa actual.
+    endpoint = obtenerEndpointToken(webActiva);                 //Obtiene el endpoint de autenticacion.
+
+    if(endpoint.empty()){                                       //Verifica que el endpoint exista.
+        msg = "No se encontro endpoint de token.\n";
         msg = traduccion(config, &msg);
-        cout << msg << endl;
+        cout << msg;
+    }else{
+        ejecutarPeticionToken(endpoint);                        //Solicita el token al servidor.
+        respuesta = leerRespuestaToken();                       //Lee la respuesta generada.
+
+        if(respuesta.empty()){                                  //Verifica que exista respuesta.
+            msg = "No se pudo leer token.json.\n";
+            msg = traduccion(config, &msg);
+            cout << msg;
+        }else{
+            if(guardarTokens(respuesta, tokenyRefreshToken)){   //Guarda los tokens obtenidos.
+                msg = "Token obtenido correctamente.\n";
+                msg = traduccion(config, &msg);
+                cout << msg;
+            }else{                                              //Muestra error si no se obtuvo token.
+                msg = "Error al obtener token.\n";
+                msg = traduccion(config, &msg);
+                cout << msg;
+                msg = "Respuesta del servidor:\n";
+                msg = traduccion(config, &msg);
+                cout << msg << respuesta << endl;
+            }
+        }
+    }
+}
+
+//##### Modulo 33. #####
+//Realiza el login del usuario obteniendo los tokens de autenticacion.
+bool login(TART* tokenyRefreshToken){
+    string msg;
+
+    conseguirToken(tokenyRefreshToken);         //Solicita los tokens al servidor.
+
+    if(tokenyRefreshToken->token.empty()){      //Verifica que el token se haya obtenido sino retorna falso.
+        msg = "Error en login.\n";
+        msg = traduccion(config, &msg);
+        cout << msg;
+
+        return false;
+
+    }else{                                     //Si el login fue exitoso retorna verdader.
+        msg = "Login exitoso.\n";
+        msg = traduccion(config, &msg);
+        cout << msg;
+
+        return true;
+    }
+}
+
+//##### Modulo 34. #####
+//Obtiene el endpoint de la API deseada.
+string obtenerEndpointPost(int indiceApi, apisWeb *lista){
+    if(indiceApi < 0 || indiceApi >= lista[0].cantApis){
         return "";
     }
 
-    endpoint = lista.apis[indiceApi];
-    comando =
-        "curl -s -X GET \"" + endpoint + "\" "
-        "-H \"Authorization: Bearer " + token + "\" > respuesta.json";
+    return lista[0].apis[indiceApi];
+}
 
-    system(comando.c_str());
-    ifstream archivo("respuesta.json");
+//##### Modulo 35. #####
+//Lee el archivo respuesta.json y retorna su contenido.
+string leerRespuestaJson(){
+    ifstream archivo;
+    string linea;
+    string respuesta;
 
-    if (!archivo.is_open()) {
-        msg = "No se pudo abrir respuesta.json";
-        msg = traduccion(config, &msg);
-        cout << msg << endl;
+    archivo.open("respuesta.json");
+    if(!archivo.is_open()){                         //Verifica que el archivo exista.
         return "";
     }
 
-    string respuesta((istreambuf_iterator<char>(archivo)), istreambuf_iterator<char>());
+    while(getline(archivo, linea)){                //Concatena toda la respuesta JSON.
+        respuesta += linea;
+    }
     archivo.close();
 
     return respuesta;
 }
 
-//##### Modulo . #####
-void post(int indiceApi, apisWeb *lista[100]){
-    //recibe como parametro el indice de la api deseada y el listado de apis y hace el posteo deseado (ya sea de la cuenta, activos, etc)
+//##### Modulo 36. #####
+//Solicita un simbolo al usuario.
+string pedirSimbolo(){
+    string simbolo;
     string msg;
-    string comando;
-    string endpoint;
 
-    if (indiceApi < 0 || indiceApi >= lista.cantApis) {
-        msg = "Indice de API invalido";
-        msg = traduccion(config, &msg);
-        cout << msg << endl;
-        return;
-    }
-
-    endpoint = lista.apis[indiceApi];
-    comando =
-        "curl -s -X POST \"" + endpoint + "\" "
-        "-H \"Authorization: Bearer " + token + "\" "
-        "-H \"Content-Type: application/json\" "
-        "-d \"{}\" > respuesta.json";
-
-    system(comando.c_str());
-    msg = "POST ejecutado";
+    msg = "Simbolo: ";
     msg = traduccion(config, &msg);
-    cout << msg << endl;
+    cout << msg;
+    getline(cin, simbolo);
+
+    return simbolo;
 }
 
-//##### Modulo . #####
+//##### Modulo 37. #####
+//Construye el endpoint agregando simbolo si corresponde.
+string construirEndpoint(string endpoint, string simbolo){
+    if(simbolo != "-1-"){                          //Verifica que no sea unico elemento.
+        if(simbolo != "-0-"){                      //Verifica que existan elementos.
+            if(simbolo.empty() == false){          //Verifica que el simbolo no este vacio.
+                endpoint += "/" + simbolo;         //Agrega el simbolo al endpoint.
+            }
+        }
+    }
+
+    return endpoint;
+}
+
+//##### Modulo 38. #####
+//Ejecuta una peticion GET y guarda la respuesta en respuesta.json.
+bool ejecutarGet(string endpoint){
+    string comando;
+
+    if(endpoint.empty()){                          //Verifica que exista endpoint.
+        return false;
+    }
+
+    comando =
+    "curl -s -X GET \"" + endpoint +
+    "\" > respuesta.json";
+
+    system(comando.c_str());                       //Ejecuta la peticion GET.
+
+    return true;
+}
+
+//##### Modulo 39. #####
+//Cuenta la cantidad de objetos JSON existentes en la respuesta.
+int contarElementosJson(string respuesta){
+    int cantidad;
+    int i;
+
+    cantidad = 0;
+
+    for(i = 0; i < respuesta.size(); i++){
+        if(respuesta[i] == '{'){                   //Cuenta objetos JSON.
+            cantidad++;
+        }
+    }
+
+    return cantidad;
+}
+
+//##### Modulo 40. #####
+//Convierte una cantidad numerica al codigo interno correspondiente.
+string convertirCantidadCodigo(int cantidad){
+    if(cantidad <= 0){                             //No existen elementos.
+        return "-0-";
+    }else{
+        if(cantidad == 1){                         //Existe un unico elemento.
+            return "-1-";
+        }else{                                     //Existen multiples elementos.
+            return "-2-";
+        }
+    }
+}
+
+//##### Modulo 41. #####
+//Retorna la cantidad de elementos disponibles para una API.
+//("-0-" = no hay elementos.
+// "-1-" = existe un unico elemento.
+// "-2-" = existen multiples elementos.)
+string getCantElementos(int indiceApi, apisWeb *lista){
+    string endpoint;
+    string respuesta;
+    int cantidad;
+
+    endpoint = obtenerEndpointPost(indiceApi, lista);
+    if(endpoint.empty()){                          //Verifica que exista endpoint.
+        return "-0-";
+    }
+
+    if(ejecutarGet(endpoint) == false){            //Ejecuta GET sin autenticacion.
+        return "-0-";
+    }
+
+    respuesta = leerRespuestaJson();
+    if(respuesta.empty()){                         //Verifica que exista respuesta.
+        return "-0-";
+    }
+
+    cantidad = contarElementosJson(respuesta);
+
+    return convertirCantidadCodigo(cantidad);
+}
+
+//##### Modulo 42. #####
+//Ejecuta una peticion GET autenticada.
+bool ejecutarGetAutenticado(string endpoint){
+    string comando;
+
+    if(endpoint.empty()){                          //Verifica que exista endpoint.
+        return false;
+    }
+
+    comando =
+    "curl -s -X GET \"" + endpoint + "\" "
+    "-H \"Authorization: Bearer " + tokenRefreshToken.token +
+    "\" > respuesta.json";
+
+    system(comando.c_str());                       //Ejecuta la peticion autenticada.
+
+    return true;
+}
+
+//##### Modulo 43. #####
+//Obtiene el endpoint GET deseado.
+string obtenerEndpointGet(int indiceApi, apisWeb *lista){
+    if(indiceApi < 0){                             //Verifica indice negativo.
+        return "";
+    }else{
+        if(indiceApi >= lista[0].cantApis){        //Verifica limite de APIs.
+            return "";
+        }else{
+            return lista[0].apis[indiceApi];       //Retorna endpoint solicitado.
+        }
+    }
+}
+
+//##### Modulo 44. #####
+//Obtiene el simbolo dependiendo de la cantidad de elementos.
+string obtenerSimboloGet(int indiceApi, apisWeb *lista){
+    string cantidadElementos;
+    string simbolo;
+
+    cantidadElementos = getCantElementos(indiceApi, lista);
+
+    if(cantidadElementos == "-0-"){                //No existen elementos.
+        return "-0-";
+    }else{
+        if(cantidadElementos == "-1-"){            //Existe un unico elemento.
+            return "-1-";
+        }else{
+            simbolo = pedirSimbolo();              //Solicita simbolo al usuario.
+
+            if(simbolo.empty()){                   //Verifica simbolo vacio.
+                return "-0-";
+            }else{
+                return simbolo;
+            }
+        }
+    }
+}
+
+//##### Modulo 45. #####
+//Realiza el proceso GET completo.
+string ejecutarProcesoGet(string endpoint){
+    if(ejecutarGetAutenticado(endpoint) == false){
+        return "";
+    }
+
+    return leerRespuestaJson();
+}
+
+//##### Modulo 46. #####
+//Obtiene la informacion del estado de cuenta.
+string getCuenta(int indiceApi, apisWeb *lista){
+    string endpoint;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);
+    if(endpoint.empty()){                          //Verifica que exista endpoint.
+        return "";
+    }
+
+    return ejecutarProcesoGet(endpoint);
+}
+
+//##### Modulo 47. #####
+//Obtiene la informacion de acciones.
+string getAcciones(int indiceApi, apisWeb *lista){
+    string endpoint;
+    string simbolo;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);
+    if(endpoint.empty()){                          //Verifica endpoint valido.
+        return "";
+    }
+
+    simbolo = obtenerSimboloGet(indiceApi, lista);
+    if(simbolo == "-0-"){                          //Verifica existencia de simbolo.
+        return "";
+    }
+
+    endpoint = construirEndpoint(endpoint, simbolo);
+
+    return ejecutarProcesoGet(endpoint);
+}
+
+//##### Modulo 48. #####
+//Obtiene la informacion de CEDEARs.
+string getCDEARs(int indiceApi, apisWeb *lista){
+    string endpoint;
+    string simbolo;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);
+    if(endpoint.empty()){
+        return "";
+    }
+
+    simbolo = obtenerSimboloGet(indiceApi, lista);
+    if(simbolo == "-0-"){
+        return "";
+    }
+
+    endpoint = construirEndpoint(endpoint, simbolo);
+
+    return ejecutarProcesoGet(endpoint);
+}
+
+//##### Modulo 49. #####
+//Obtiene la informacion de bonos.
+string getBonos(int indiceApi, apisWeb *lista){
+    string endpoint;
+    string simbolo;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);
+    if(endpoint.empty()){
+        return "";
+    }
+
+    simbolo = obtenerSimboloGet(indiceApi, lista);
+    if(simbolo == "-0-"){
+        return "";
+    }
+
+    endpoint = construirEndpoint(endpoint, simbolo);
+
+    return ejecutarProcesoGet(endpoint);
+}
+
+//##### Modulo 50. #####
+//Obtiene la informacion de opciones.
+string getOpciones(int indiceApi, apisWeb *lista){
+    string endpoint;
+    string simbolo;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);
+    if(endpoint.empty()){
+        return "";
+    }
+
+    simbolo = obtenerSimboloGet(indiceApi, lista);
+    if(simbolo == "-0-"){
+        return "";
+    }
+
+    endpoint = construirEndpoint(endpoint, simbolo);
+
+    return ejecutarProcesoGet(endpoint);
+}
+
+//##### Modulo 51. #####
+//Obtiene la informacion de cauciones.
+string getCautiones(int indiceApi, apisWeb *lista){
+    string endpoint;
+    string simbolo;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);
+    if(endpoint.empty()){
+        return "";
+    }
+
+    simbolo = obtenerSimboloGet(indiceApi, lista);
+    if(simbolo == "-0-"){
+        return "";
+    }
+
+    endpoint = construirEndpoint(endpoint, simbolo);
+
+    return ejecutarProcesoGet(endpoint);
+}
+
+//##### Modulo 52. #####
+//Obtiene la informacion de FCI.
+string getFCI(int indiceApi, apisWeb *lista){
+    string endpoint;
+    string simbolo;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);
+    if(endpoint.empty()){
+        return "";
+    }
+
+    simbolo = obtenerSimboloGet(indiceApi, lista);
+    if(simbolo == "-0-"){
+        return "";
+    }
+
+    endpoint = construirEndpoint(endpoint, simbolo);
+
+    return ejecutarProcesoGet(endpoint);
+}
+
+//##### Modulo 53. #####
+//Obtiene la informacion de obligaciones negociables.
+string getON(int indiceApi, apisWeb *lista){
+    string endpoint;
+    string simbolo;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);
+    if(endpoint.empty()){
+        return "";
+    }
+
+    simbolo = obtenerSimboloGet(indiceApi, lista);
+    if(simbolo == "-0-"){
+        return "";
+    }
+
+    endpoint = construirEndpoint(endpoint, simbolo);
+
+    return ejecutarProcesoGet(endpoint);
+}
+
+//##### Modulo 54. #####
+//Obtiene la informacion de portafolios.
+string getPortafolios(int indiceApi, apisWeb *lista){
+    string endpoint;
+    string simbolo;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);
+    if(endpoint.empty()){
+        return "";
+    }
+
+    simbolo = obtenerSimboloGet(indiceApi, lista);
+    if(simbolo == "-0-"){
+        return "";
+    }
+
+    endpoint = construirEndpoint(endpoint, simbolo);
+
+    return ejecutarProcesoGet(endpoint);
+}
+
+//##### Modulo 55. #####
+//Obtiene la informacion de dolar MEP.
+string getDolarMEP(int indiceApi, apisWeb *lista){
+    string endpoint;
+    string simbolo;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);
+    if(endpoint.empty()){
+        return "";
+    }
+
+    simbolo = obtenerSimboloGet(indiceApi, lista);
+    if(simbolo == "-0-"){
+        return "";
+    }
+
+    endpoint = construirEndpoint(endpoint, simbolo);
+
+    return ejecutarProcesoGet(endpoint);
+}
+
+//##### Modulo 56. #####
+//Obtiene la informacion de licitaciones.
+string getLicitaciones(int indiceApi, apisWeb *lista){
+    string endpoint;
+    string simbolo;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);
+    if(endpoint.empty()){
+        return "";
+    }
+
+    simbolo = obtenerSimboloGet(indiceApi, lista);
+    if(simbolo == "-0-"){
+        return "";
+    }
+
+    endpoint = construirEndpoint(endpoint, simbolo);
+
+    return ejecutarProcesoGet(endpoint);
+}
+
+//##### Modulo 57. #####
+//Ejecuta una peticion POST a la API indicada.
+bool ejecutarPost(string endpoint, string datos){
+    string comando;
+
+    if(endpoint.empty()){                          //Verifica que exista endpoint.
+        return false;
+    }
+
+    comando =
+    "curl -s -X POST \"" + endpoint + "\" "
+    "-H \"Authorization: Bearer " + tokenRefreshToken.token + "\" "
+    "-H \"Content-Type: application/json\" "
+    "-d \"" + datos + "\" > respuesta.json";
+
+    system(comando.c_str());                       //Ejecuta la peticion POST.
+
+    return true;
+}
+
+//##### Modulo 58. #####
+//Lee la respuesta generada por la peticion POST.
+string leerRespuestaPost(){
+    return leerRespuestaJson();
+}
+
+//##### Modulo 59. #####
+//Realiza una peticion POST utilizando la API seleccionada.
+void post(int indiceApi, apisWeb *lista){
+    string endpoint;
+    string respuesta;
+    string datos;
+    string msg;
+
+    endpoint = obtenerEndpointPost(indiceApi, lista);
+
+    if(endpoint.empty()){                          //Verifica que exista endpoint.
+        msg = "Indice de API invalido.\n";
+        msg = traduccion(config, &msg);
+        cout << msg;
+    }else{
+        msg = "Datos JSON: ";
+        msg = traduccion(config, &msg);
+        cout << msg;
+        getline(cin, datos);                       //Solicita datos JSON.
+
+        if(ejecutarPost(endpoint, datos)){         //Ejecuta peticion POST.
+            respuesta = leerRespuestaPost();
+            msg = "POST ejecutado correctamente.\n";
+            msg = traduccion(config, &msg);
+            cout << msg;
+
+            if(!respuesta.empty()){                //Muestra respuesta del servidor.
+                msg = "Respuesta del servidor:\n";
+                msg = traduccion(config, &msg);
+                cout << msg << respuesta << endl;
+            }
+
+        }else{
+            msg = "Error al ejecutar POST.\n";
+            msg = traduccion(config, &msg);
+            cout << msg;
+        }
+    }
+}
+//===============================================================================
+// Se han modificado y completado hasta el modulo 59, se deben seguir modificando
+// y completando (o directamente desarrollar) los modulos del 60 en adelante.
+// Este comentario solo se usa como marca par determinar hasta donde se hizo y
+// desde donde se debe seguir por lo que si se avanza de debe cambiar de lugar 
+// y modificar (o borrar si es que ya se termino).
+//===============================================================================
+
+//##### Modulo 60. #####
 void mostrar(int opcion){
     //recibe la opcion de lo que se desea mostrar (ya sea de la cuenta, activos, etc) y lo muestra
 }
