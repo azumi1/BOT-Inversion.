@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <vector>
+#include <iomanip>
 
 using namespace std;
 
@@ -1556,592 +1557,1560 @@ void post(int indiceApi, apisWeb *lista){
         }
     }
 }
-//===============================================================================
-// Se han modificado y completado hasta el modulo 59, se deben seguir modificando
-// y completando (o directamente desarrollar) los modulos del 60 en adelante.
-// Este comentario solo se usa como marca par determinar hasta donde se hizo y
-// desde donde se debe seguir por lo que si se avanza de debe cambiar de lugar 
-// y modificar (o borrar si es que ya se termino).
-//===============================================================================
 
 //##### Modulo 60. #####
-void mostrar(int opcion){
-    //recibe la opcion de lo que se desea mostrar (ya sea de la cuenta, activos, etc) y lo muestra
+//Retorna una linea horizontal del cuadro.
+string generarLineaCuadro(int columnas, int ancho){
+    string linea;
+    int i;
+    int j;
+
+    linea = "";
+
+    for(i = 0; i < columnas; i++){
+        linea += "+";
+
+        for(j = 0; j < ancho; j++){
+            linea += "-";
+        }
+    }
+
+    linea += "+\n";
+
+    return linea;
 }
 
-//##### Modulo . #####
-double obtenerPrecio(const string& simbolo, int indiceApi, apisWeb *lista[100]){
-    //recibe como parametro el simbolo del activo deseado y retorna el precio
+//##### Modulo 61. #####
+//Centra un texto dentro de un ancho determinado.
+string centrarTexto(string texto, int ancho){
+    int espaciosIzquierda;
+    int espaciosDerecha;
+    string resultado;
+
+    if(texto.size() >= ancho){
+        return texto.substr(0, ancho);
+    }
+
+    espaciosIzquierda = (ancho - texto.size()) / 2;
+    espaciosDerecha = ancho - texto.size() - espaciosIzquierda;
+
+    resultado = "";
+
+    while(espaciosIzquierda > 0){
+        resultado += " ";
+        espaciosIzquierda--;
+    }
+
+    resultado += texto;
+
+    while(espaciosDerecha > 0){
+        resultado += " ";
+        espaciosDerecha--;
+    }
+
+    return resultado;
+}
+
+//##### Modulo 62. #####
+//Retorna el mayor ancho necesario para una columna.
+int obtenerMayorAncho(vector<string> claves, vector<string> valores){
+    int ancho;
+    int i;
+
+    ancho = 15;
+
+    for(i = 0; i < claves.size(); i++){
+        if(claves[i].size() > ancho){
+            ancho = claves[i].size();
+        }
+
+        if(valores[i].size() > ancho){
+            ancho = valores[i].size();
+        }
+    }
+
+    ancho += 4;
+
+    return ancho;
+}
+
+//##### Modulo 63. #####
+//Elimina caracteres innecesarios del valor extraido.
+string limpiarValor(string valor){
+    while(valor.empty() == false){
+        if(valor[0] == ' ' || valor[0] == '\"'){
+            valor.erase(0, 1);
+        }else{
+            break;
+        }
+    }
+
+    while(valor.empty() == false){
+        if(valor[valor.size() - 1] == ' ' || valor[valor.size() - 1] == '\"' || valor[valor.size() - 1] == '\n'){
+            valor.erase(valor.size() - 1);
+        }else{
+            break;
+        }
+    }
+
+    return valor;
+}
+
+//##### Modulo 64. #####
+//Extrae claves y valores simples desde un JSON.
+void extraerDatosJson(string respuesta, vector<string> *claves, vector<string> *valores){
+    string clave;
+    string valor;
+    int posicion;
+    int inicioClave;
+    int finClave;
+    int inicioValor;
+    int finValor;
+
+    posicion = 0;
+
+    while(true){
+        inicioClave = respuesta.find("\"", posicion);
+        if(inicioClave == string::npos){
+            break;
+        }
+
+        finClave = respuesta.find("\"", inicioClave + 1);
+        if(finClave == string::npos){
+            break;
+        }
+
+        clave = respuesta.substr(inicioClave + 1, finClave - inicioClave - 1);
+        inicioValor = respuesta.find(":", finClave);
+        if(inicioValor == string::npos){
+            break;
+        }
+
+        inicioValor++;
+        while(respuesta[inicioValor] == ' ' || respuesta[inicioValor] == '\"'){
+            inicioValor++;
+        }
+
+        finValor = respuesta.find(",", inicioValor);
+        if(finValor == string::npos){
+            finValor = respuesta.find("}", inicioValor);
+        }
+
+        if(finValor == string::npos){
+            break;
+        }
+
+        valor = respuesta.substr(inicioValor, finValor - inicioValor);
+        valor = limpiarValor(valor);
+        claves->push_back(clave);
+        valores->push_back(valor);
+        posicion = finValor + 1;
+    }
+}
+
+//##### Modulo 65. #####
+//Muestra una fila del cuadro.
+void mostrarFila(vector<string> datos, int ancho){
+    int i;
+    string texto;
+
+    for(i = 0; i < datos.size(); i++){
+        texto = centrarTexto(datos[i], ancho);
+        cout << "|" << texto;
+    }
+
+    cout << "|" << endl;
+}
+
+//##### Modulo 66. #####
+//Traduce todas las claves del cuadro.
+void traducirClaves(vector<string> *claves){
+    int i;
+    string texto;
+
+    for(i = 0; i < claves->size(); i++){
+        texto = (*claves)[i];
+        texto = traduccion(config, &texto);
+        (*claves)[i] = texto;
+    }
+}
+
+//##### Modulo 67. #####
+//Verifica que existan datos validos.
+bool datosValidos(vector<string> claves, vector<string> valores){
+    if(claves.size() <= 0){
+        return false;
+    }
+
+    if(valores.size() <= 0){
+        return false;
+    }
+
+    return true;
+}
+
+//##### Modulo 68. #####
+//Muestra mensaje de error generico.
+void mostrarErrorMostrar(string texto){
+    texto = traduccion(config, &texto);
+    cout << texto;
+}
+
+//##### Modulo 69. #####
+//Muestra la informacion obtenida desde los GET en forma de cuadro.
+void mostrar(int opcion){
+    string respuesta;
+    string linea;
+    vector<string> claves;
+    vector<string> valores;
+    vector<string> fila;
+    int ancho;
+
+    respuesta = leerRespuestaJson();                   //Lee la respuesta JSON.
+
+    if(respuesta.empty()){                             //Verifica que exista respuesta.
+        mostrarErrorMostrar(
+            "No hay informacion para mostrar.\n"
+        );
+
+        return;
+    }
+
+    extraerDatosJson(respuesta, &claves, &valores);
+
+    if(datosValidos(claves, valores) == false){        
+        mostrarErrorMostrar("No se encontraron datos validos.\n");
+
+        return;
+    }
+
+    traducirClaves(&claves);                           //Traduce encabezados.
+    ancho = obtenerMayorAncho(claves, valores);
+    linea = generarLineaCuadro(claves.size(), ancho);
+    cout << linea;
+    mostrarFila(claves, ancho);                        //Muestra encabezados.
+    cout << linea;
+    mostrarFila(valores, ancho);                       //Muestra datos.
+    cout << linea;
+}
+
+//##### Modulo 75. #####
+//Obtiene el precio de un activo especifico.
+double obtenerPrecio(string simbolo, int indiceApi, apisWeb *lista){
+    string endpoint;
     string respuesta;
     string precioStr;
 
-    respuesta = get(indiceApi, lista);
-    precioStr = extraerValor(respuesta, "price");
+    endpoint = obtenerEndpointGet(indiceApi, lista);    //Obtiene el endpoint correspondiente.
+    if(endpoint.empty()){                               //Verifica que exista endpoint.
+        return 0.0;
+    }
 
-    if (precioStr.empty()){
+    if(simbolo.empty()){                                //Verifica que exista simbolo.
+        return 0.0;
+    }
+
+    endpoint = construirEndpoint(endpoint, simbolo);    //Construye el endpoint final.
+    respuesta = ejecutarProcesoGet(endpoint);           //Ejecuta la peticion GET.
+    if(respuesta.empty()){                              //Verifica que exista respuesta.
+        return 0.0;
+    }
+
+    precioStr = extraerValor(respuesta, "price");       //Extrae el precio del JSON.
+
+    if(precioStr.empty()){                              //Verifica que exista el precio.
+        precioStr = extraerValor(respuesta, "precio");
+    }
+
+    if(precioStr.empty()){
+        return 0.0;
+    }
+
+    return atof(precioStr.c_str());                     //Convierte el valor a double.
+}
+
+//##### Modulo 76. #####
+//Obtiene el saldo disponible de la cuenta.
+double obtenerSaldo(int indiceApi, apisWeb *lista){
+    string respuesta;
+    string saldoStr;
+
+    respuesta = getCuenta(indiceApi, lista);            //Obtiene la informacion de la cuenta.
+    if(respuesta.empty()){                              //Verifica que exista respuesta.
+        return 0.0;
+    }
+
+    saldoStr = extraerValor(respuesta, "saldo");        //Busca el saldo principal.
+
+    if(saldoStr.empty()){                               //Busca nombres alternativos.
+        saldoStr = extraerValor(respuesta, "balance");
+    }
+
+    if(saldoStr.empty()){
+        saldoStr = extraerValor(respuesta, "cash");
+    }
+
+    if(saldoStr.empty()){                               //Verifica que exista saldo.
+        return 0.0;
+    }
+
+    return atof(saldoStr.c_str());                      //Convierte el saldo a double.
+}
+
+//##### Modulo 77. #####
+//Verifica si existe un activo especifico.
+bool existeActivo(string respuesta, string simbolo){
+    if(respuesta.find(simbolo) != string::npos){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+//##### Modulo 78. #####
+//Consulta si la cuenta posee un activo especifico.
+bool tengoActivo(string simbolo, int indiceApi, apisWeb *lista){
+    string endpoint;
+    string respuesta;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);    //Obtiene el endpoint correspondiente.
+    if(endpoint.empty()){                               //Verifica que exista endpoint.
+        return false;
+    }
+
+    respuesta = ejecutarProcesoGet(endpoint);           //Obtiene la informacion de activos.
+    if(respuesta.empty()){                              //Verifica que exista respuesta.
+        return false;
+    }
+
+    return existeActivo(respuesta, simbolo);            //Busca el simbolo en la respuesta.
+}
+
+//##### Modulo 79. #####
+//Solicita una cantidad numerica al usuario.
+int pedirCantidad(){
+    int cantidad;
+    string msg;
+
+    msg = "Cantidad: ";
+    msg = traduccion(config, &msg);
+    cout << msg;
+    cin >> cantidad;
+    cin.ignore();
+
+    return cantidad;
+}
+
+//##### Modulo 80. #####
+//Construye el JSON de compra o venta.
+string construirJsonOperacion(string simbolo, int cantidad){
+    string datos;
+
+    datos =
+    "{\\\"symbol\\\":\\\"" + simbolo +
+    "\\\",\\\"quantity\\\":" + to_string(cantidad) +
+    "}";
+
+    return datos;
+}
+
+//##### Modulo 81. #####
+//Ejecuta una operacion POST autenticada.
+bool ejecutarOperacionPost(string endpoint, string datos){
+    string comando;
+
+    if(endpoint.empty()){
+        return false;
+    }
+
+    comando =
+    "curl -s -X POST \"" + endpoint + "\" "
+    "-H \"Authorization: Bearer " + tokenRefreshToken.token + "\" "
+    "-H \"Content-Type: application/json\" "
+    "-d \"" + datos + "\" > respuesta.json";
+
+    system(comando.c_str());
+
+    return true;
+}
+
+//##### Modulo 82. #####
+//Calcula el costo total de una operacion.
+double calcularCostoOperacion(double precio, int cantidad){
+    return precio * cantidad;
+}
+
+//##### Modulo 83. #####
+//Verifica si el saldo disponible alcanza para operar.
+bool saldoSuficiente(double saldo, double costoTotal){
+    if(saldo >= costoTotal){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+//##### Modulo 84. #####
+//Muestra el listado de activos segun la opcion elegida.
+void mostrarActivosOperacion(int opcion){
+    mostrar(opcion);
+}
+
+//##### Modulo 85. #####
+//Obtiene el endpoint de operacion.
+string obtenerEndpointOperacion(int indiceApi, apisWeb *lista){
+    if(indiceApi < 0){
+        return "";
+    }else{
+        if(indiceApi >= lista[0].cantApis){
+            return "";
+        }else{
+            return lista[0].apis[indiceApi];
+        }
+    }
+}
+
+//##### Modulo 86. #####
+//Muestra un mensaje traducido.
+void mostrarMensaje(string mensaje){
+    mensaje = traduccion(config, &mensaje);
+    cout << mensaje;
+}
+
+//##### Modulo 87. #####
+//Verifica que el simbolo ingresado sea valido.
+bool simboloValido(string simbolo){
+    if(simbolo.empty()){
+        mostrarMensaje("Simbolo invalido.\n");
+        return false;
+    }else{
+        return true;
+    }
+}
+
+//##### Modulo 88. #####
+//Verifica que la cantidad ingresada sea valida.
+bool cantidadValida(int cantidad){
+    if(cantidad <= 0){
+        mostrarMensaje("Cantidad invalida.\n");
+        return false;
+    }else{
+        return true;
+    }
+}
+
+//##### Modulo 89. #####
+//Verifica que el precio obtenido sea valido.
+bool precioValido(double precio){
+    if(precio <= 0){
+        mostrarMensaje("No se pudo obtener el precio.\n");
+        return false;
+    }else{
+        return true;
+    }
+}
+
+//##### Modulo 90. #####
+//Verifica que exista saldo suficiente.
+bool verificarSaldo(double saldo, double costoTotal){
+    if(saldoSuficiente(saldo, costoTotal) == false){
+        mostrarMensaje("Saldo insuficiente.\n");
+        return false;
+    }else{
+        return true;
+    }
+}
+
+//##### Modulo 91. #####
+//Verifica que el endpoint sea valido.
+bool endpointValido(string endpoint){
+    if(endpoint.empty()){
+        mostrarMensaje("Endpoint invalido.\n");
+        return false;
+    }else{
+        return true;
+    }
+}
+
+//##### Modulo 92. #####
+//Verifica si el usuario posee el activo.
+bool verificarActivoUsuario(string simbolo, int indiceApi, apisWeb *lista){
+    if(tengoActivo(simbolo, indiceApi, lista) == false){
+        mostrarMensaje("No posee este activo.\n");
+        return false;
+    }else{
+        return true;
+    }
+}
+
+//##### Modulo 93. #####
+//Muestra el resultado de una operacion.
+void mostrarResultadoOperacion(bool estado, string respuesta, string mensajeExito, string mensajeError){
+    if(estado){
+        mostrarMensaje(mensajeExito);
+
+        if(respuesta.empty() == false){
+            mostrarMensaje("Respuesta del servidor:\n");
+            cout << respuesta << endl;
+        }
+    }else{
+        mostrarMensaje(mensajeError);
+    }
+}
+
+//##### Modulo 94. #####
+//Realiza la compra de un activo.
+void compra(int opcion, int indiceApi, apisWeb *lista){
+    string simbolo;
+    string endpoint;
+    string datos;
+    string respuesta;
+    int cantidad;
+    double precio;
+    double saldo;
+    double costoTotal;
+    bool estadoOperacion;
+
+    mostrarActivosOperacion(opcion);                    //Muestra activos disponibles.
+    simbolo = pedirSimbolo();                           //Solicita simbolo.
+    if(simboloValido(simbolo) == false){
+        return;
+    }
+
+    cantidad = pedirCantidad();                         //Solicita cantidad.
+    if(cantidadValida(cantidad) == false){
+        return;
+    }
+
+    precio = obtenerPrecio(simbolo, indiceApi, lista); //Obtiene precio.
+    if(precioValido(precio) == false){
+        return;
+    }
+
+    saldo = obtenerSaldo(0, lista);                    //Obtiene saldo.
+    costoTotal = calcularCostoOperacion(precio, cantidad);
+    if(verificarSaldo(saldo, costoTotal) == false){
+        return;
+    }
+
+    endpoint = obtenerEndpointOperacion(indiceApi, lista);
+    if(endpointValido(endpoint) == false){
+        return;
+    }
+
+    datos = construirJsonOperacion(simbolo, cantidad);
+    estadoOperacion = ejecutarOperacionPost(endpoint, datos);
+    respuesta = leerRespuestaJson();
+    mostrarResultadoOperacion(estadoOperacion, respuesta, "Compra realizada correctamente.\n", "Error al realizar la compra.\n");
+}
+
+//##### Modulo 95. #####
+//Realiza la venta de un activo.
+void venta(int opcion, int indiceApi, apisWeb *lista){
+    string simbolo;
+    string endpoint;
+    string datos;
+    string respuesta;
+    int cantidad;
+    bool estadoOperacion;
+
+    mostrarActivosOperacion(opcion);                    //Muestra activos disponibles.
+    simbolo = pedirSimbolo();                           //Solicita simbolo.
+    if(simboloValido(simbolo) == false){
+        return;
+    }
+
+    if(verificarActivoUsuario(simbolo, indiceApi, lista) == false){
+        return;
+    }
+
+    cantidad = pedirCantidad();                         //Solicita cantidad.
+    if(cantidadValida(cantidad) == false){
+        return;
+    }
+
+    endpoint = obtenerEndpointOperacion(indiceApi, lista);
+    if(endpointValido(endpoint) == false){
+        return;
+    }
+
+    datos = construirJsonOperacion(simbolo, cantidad);
+    estadoOperacion = ejecutarOperacionPost(endpoint, datos);
+    respuesta = leerRespuestaJson();
+    mostrarResultadoOperacion(estadoOperacion, respuesta, "Venta realizada correctamente.\n", "Error al realizar la venta.\n"
+    );
+}
+
+//##### Modulo 96. #####
+//Obtiene el historial de precios de un activo.
+vector<double> obtenerHistorial(string simbolo, int indiceApi, apisWeb *lista){
+    vector<double> precios;
+    string endpoint;
+    string respuesta;
+    string valor;
+    int posicion;
+    int inicio;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);
+    if(endpoint.empty()){
+        return precios;
+    }
+
+    endpoint = construirEndpoint(endpoint, simbolo);
+    if(ejecutarGetAutenticado(endpoint) == false){
+        return precios;
+    }
+
+    respuesta = leerRespuestaJson();
+    if(respuesta.empty()){
+        return precios;
+    }
+
+    posicion = 0;
+
+    while(true){
+        posicion = respuesta.find("\"price\"", posicion);
+        if(posicion == string::npos){
+            break;
+        }
+
+        inicio = respuesta.find(":", posicion);
+        if(inicio == string::npos){
+            break;
+        }
+
+        inicio++;
+        while(inicio < respuesta.size() && (respuesta[inicio] == ' '  || respuesta[inicio] == '"'  || respuesta[inicio] == '\t')){
+            inicio++;
+        }
+
+        valor = "";
+        while(inicio < respuesta.size() && ((respuesta[inicio] >= '0' && respuesta[inicio] <= '9') || respuesta[inicio] == '.')){
+            valor += respuesta[inicio];
+            inicio++;
+        }
+
+        if(valor.empty() == false){
+            precios.push_back(atof(valor.c_str()));
+        }
+
+        posicion = inicio;
+    }
+
+    return precios;
+}
+
+//##### Modulo 97. #####
+//Calcula la suma de un rango del historial.
+double calcularSumaHistorial(vector<double> datos, int inicio, int fin){
+    double suma;
+    int i;
+
+    suma = 0;
+    for(i = inicio; i <= fin; i++){
+        suma += datos[i];
+    }
+
+    return suma;
+}
+
+//##### Modulo 98. #####
+//Verifica si el periodo solicitado es valido.
+bool periodoValido(vector<double> datos, int periodo){
+    if(periodo <= 0){
+        return false;
+    }else{
+        if(datos.size() < periodo){
+            return false;
+        }
+    }
+
+    return true;
+}
+
+//##### Modulo 99. #####
+//Calcula la media movil de un historial.
+double mediaMovil(vector<double> datos, int periodo){
+    double suma;
+    int inicio;
+    int fin;
+
+    if(periodoValido(datos, periodo) == false){
+        return 0.0;
+    }
+
+    inicio = datos.size() - periodo;
+    fin = datos.size() - 1;
+    suma = calcularSumaHistorial(datos, inicio, fin);
+
+    return suma / periodo;
+}
+
+//##### Modulo 100. #####
+//Calcula la variacion entre dos precios.
+double calcularCambio(double actual, double anterior){
+    return actual - anterior;
+}
+
+//##### Modulo 101. #####
+//Acumula ganancias y perdidas del historial.
+void acumularGananciasPerdidas(vector<double> datos, double *ganancias, double *perdidas){
+    double cambio;
+    int i;
+
+    *ganancias = 0.0;
+    *perdidas = 0.0;
+
+    for(i = 1; i < datos.size(); i++){
+        cambio = calcularCambio(
+            datos[i],
+            datos[i - 1]
+        );
+
+        if(cambio > 0){
+            *ganancias += cambio;
+        }else{
+            *perdidas -= cambio;
+        }
+    }
+}
+
+//##### Modulo 102. #####
+//Calcula el valor RS.
+double calcularRS(double ganancias, double perdidas){
+    if(perdidas <= 0){
+        return 0.0;
+    }
+
+    return ganancias / perdidas;
+}
+
+//##### Modulo 103. #####
+//Calcula el indicador RSI.
+double calcularRSI(vector<double> datos){
+    double ganancias;
+    double perdidas;
+    double rs;
+
+    if(datos.size() < 2){
+        return 0.0;
+    }
+
+    acumularGananciasPerdidas(datos, &ganancias, &perdidas);
+
+    if(perdidas == 0){
+        return 100.0;
+    }
+
+    rs = calcularRS(ganancias, perdidas);
+
+    return 100 - (100 / (1 + rs));
+}
+
+//##### Modulo 104. #####
+//Obtiene el volumen de un activo.
+double obtenerVolumen(string simbolo, int indiceApi, apisWeb *lista){
+    string endpoint;
+    string respuesta;
+    string volumenStr;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);
+    if(endpoint.empty()){
+        return 0.0;
+    }
+
+    endpoint = construirEndpoint(endpoint, simbolo);
+    respuesta = ejecutarProcesoGet(endpoint);
+    if(respuesta.empty()){
+        return 0.0;
+    }
+
+    volumenStr = extraerValor(respuesta, "volume");
+    if(volumenStr.empty()){
+        volumenStr = extraerValor(
+            respuesta,
+            "volumen"
+        );
+    }
+
+    if(volumenStr.empty()){
+        return 0.0;
+    }
+
+    return atof(volumenStr.c_str());
+}
+
+//##### Modulo 105. #####
+//Verifica si el volumen es considerado alto.
+bool volumenAlto(string simbolo, int indiceApi, apisWeb *lista){
+    double volumen;
+    double limite;
+
+    limite = 1000000;
+    volumen = obtenerVolumen(simbolo, indiceApi, lista);
+
+    if(volumen > limite){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+//##### Modulo 106. #####
+//Calcula el multiplicador de la EMA.
+double calcularMultiplicadorEMA(int periodo){
+    return 2.0 / (periodo + 1);
+}
+
+//##### Modulo 107. #####
+//Verifica si existen datos suficientes para calcular EMA.
+bool datosSuficientesEMA(vector<double> datos, int periodo){
+    if(periodo <= 0){
+        return false;
+    }else{
+        if(datos.size() < periodo){
+            return false;
+        }
+    }
+
+    return true;
+}
+
+//##### Modulo 108. #####
+//Calcula la EMA de un historial de precios.
+double calcularEMA(vector<double> datos, int periodo){
+    double ema;
+    double multiplicador;
+    int i;
+
+    if(datosSuficientesEMA(datos, periodo) == false){
+        return 0.0;
+    }
+
+    multiplicador = calcularMultiplicadorEMA(periodo);
+    ema = datos[0];
+
+    for(i = 1; i < datos.size(); i++){
+        ema = (datos[i] * multiplicador) + (ema * (1 - multiplicador));
+    }
+
+    return ema;
+}
+
+//##### Modulo 109. #####
+//Obtiene el ultimo precio del historial.
+double obtenerUltimoPrecio(vector<double> datos){
+    if(datos.empty()){
+        return 0.0;
+    }
+
+    return datos.back();
+}
+
+//##### Modulo 110. #####
+//Calcula el porcentaje de ganancia o perdida.
+double calcularGananciaPorcentual(double precioActual, double precioCompra){
+    if(precioCompra <= 0){
+        return 0.0;
+    }
+
+    return (precioActual - precioCompra) / precioCompra;
+}
+
+//##### Modulo 111. #####
+//Evalua condiciones tecnicas de compra.
+bool condicionesCompraValidas(double rsi, double precioActual, double ema, bool volumen){
+    if(rsi < 30){
+        if(precioActual > ema){
+            if(volumen){
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+//##### Modulo 112. #####
+//Evalua condiciones tecnicas de venta.
+bool condicionesVentaValidas(double rsi, double ganancia, double takeProfit, double stopLoss){
+    if(rsi > 70){
+        return true;
+    }else{
+        if(ganancia > takeProfit){
+            return true;
+        }else{
+            if(ganancia < -stopLoss){
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+//##### Modulo 113. #####
+//Evalua si conviene comprar un activo.
+bool evaluarCompra(string simbolo, int indiceApi, apisWeb *lista){
+    vector<double> datos;
+    double rsi;
+    double ema;
+    double precioActual;
+    bool volumen;
+
+    datos = obtenerHistorial(simbolo, indiceApi, lista);
+    if(datos.empty()){
+        return false;
+    }
+
+    rsi = calcularRSI(datos);
+    ema = calcularEMA(datos, 10);
+    precioActual = obtenerUltimoPrecio(datos);
+    volumen = volumenAlto(simbolo, indiceApi, lista);
+
+    return condicionesCompraValidas(rsi, precioActual, ema, volumen);
+}
+
+//##### Modulo 114. #####
+//Evalua si conviene vender un activo.
+bool evaluarVenta(string simbolo, double precioCompra, int indiceApi, apisWeb *lista){
+    vector<double> datos;
+    double rsi;
+    double precioActual;
+    double ganancia;
+
+    datos = obtenerHistorial(simbolo, indiceApi, lista);
+    if(datos.empty()){
+        return false;
+    }
+
+    rsi = calcularRSI(datos);
+    precioActual = obtenerUltimoPrecio(datos);
+    ganancia = calcularGananciaPorcentual(precioActual, precioCompra);
+
+    return condicionesVentaValidas(rsi, ganancia, config.takeProfit, config.stopLoss);
+}
+
+//##### Modulo 115. #####
+//Retorna el indice de API correspondiente segun la opcion elegida.
+int obtenerIndiceApiOperacion(int opcion){
+    switch(opcion){
+        case 1:
+            return 1;   //Acciones
+
+        case 2:
+            return 2;   //CEDEARs
+
+        case 3:
+            return 3;   //Bonos
+
+        case 4:
+            return 4;   //Opciones
+
+        case 5:
+            return 5;   //Cauciones
+
+        case 6:
+            return 6;   //FCI
+
+        case 7:
+            return 7;   //ON
+
+        case 8:
+            return 8;   //Portafolios
+
+        case 9:
+            return 9;   //Dolar MEP
+
+        case 10:
+            return 10;  //Licitaciones
+
+        default:
+            return -1;
+    }
+}
+
+//##### Modulo 116. #####
+//Muestra mensaje informativo.
+void mostrarMensajeOperacion(string mensaje){
+    mensaje = traduccion(config, &mensaje);
+    cout << mensaje;
+}
+
+//##### Modulo 117. #####
+//Verifica si una opcion de operacion es valida.
+bool opcionOperacionValida(int opcion){
+    if(opcion >= 1){
+        if(opcion <= 10){
+            return true;
+        }
+    }
+
+    return false;
+}
+
+//##### Modulo 118. #####
+//Obtiene una cantidad automatica para operar.
+int calcularCantidadAutomatica(double saldo, double precio){
+    if(precio <= 0){
+        return 0;
+    }
+
+    return saldo / precio;
+}
+
+//##### Modulo 119. #####
+//Obtiene el precio de compra almacenado.
+double obtenerPrecioCompra(string simbolo, int indiceApi, apisWeb *lista){
+    string endpoint;
+    string respuesta;
+    string precioStr;
+
+    endpoint = obtenerEndpointGet(indiceApi, lista);
+    if(endpoint.empty()){
+        return 0.0;
+    }
+
+    endpoint = construirEndpoint(endpoint, simbolo);
+    respuesta = ejecutarProcesoGet(endpoint);
+    if(respuesta.empty()){
+        return 0.0;
+    }
+
+    precioStr = extraerValor(respuesta, "purchasePrice");
+    if(precioStr.empty()){
+        precioStr = extraerValor(respuesta, "precioCompra");
+    }
+
+    if(precioStr.empty()){
         return 0.0;
     }
 
     return atof(precioStr.c_str());
 }
 
-//##### Modulo . #####
-double obtenerSaldo(int indiceApi, apisWeb *lista[100]){
-    //obtiene el saldo de la cuenta
-    string respuesta;
-    string saldoStr;
-
-    respuesta = get(indiceApi, lista);
-    saldoStr = extraerValor(respuesta, "saldo");
-
-    if (saldoStr.empty()){
-        return 0.0;
-    }
-
-    return atof(saldoStr.c_str());
-}
-
-//##### Modulo . #####
-bool tengoActivo(const string& simbolo, int indiceApi, apisWeb *lista[100]){
-    //consulta si tengo un activo en especifico
-    string respuesta;
-
-    respuesta = get(indiceApi, lista);
-    if (respuesta.find(simbolo) != string::npos){
-        return true;
-    }
-
-    return false;
-}
-
-//##### Modulo . #####
-void compra(int opcion, int indiceApi, apisWeb *lista[100]){
-    //recive la opcion del tipo de activo que se desea comprar, muestra el listado de activos, pide el simbolo del activo en especifico, la 
-    //cantidad de esos activos y hace la compra, en caso de que el saldo sea insuficiente muetra un mensaje
-    string simbolo;
-    int cantidad;
-    string msg;
+//##### Modulo 120. #####
+//Realiza una compra automatica.
+void ejecutarCompraAutomatica(string simbolo, int indiceApi, apisWeb *lista){
     string endpoint;
-    string comando;
+    string datos;
+    string respuesta;
     double precio;
     double saldo;
-
-    msg = "Ingrese simbolo: ";
-    msg = traduccion(config, &msg);
-    cout << msg;
-    cin >> simbolo;
-    msg = "Cantidad: ";
-    msg = traduccion(config, &msg);
-    cout << msg;
-    cin >> cantidad;
+    double costoTotal;
+    int cantidad;
 
     precio = obtenerPrecio(simbolo, indiceApi, lista);
-    saldo = obtenerSaldo(indiceApi, lista);
-
-    if (precio * cantidad > saldo) {
-        msg = "Saldo insuficiente";
-        msg = traduccion(config, &msg);
-        cout << traduccion(config, &msg) << endl;
+    if(precio <= 0){
+        mostrarMensajeOperacion("No se pudo obtener el precio.\n");
         return;
     }
 
-    endpoint = lista.apis[indiceApi];
-    comando =
-        "curl -s -X POST \"" + endpoint + "\" "
-        "-H \"Authorization: Bearer " + token + "\" "
-        "-H \"Content-Type: application/json\" "
-        "-d \"{\\\"symbol\\\":\\\"" + simbolo +
-        "\\\",\\\"quantity\\\":" + to_string(cantidad) + "}\"";
+    saldo = obtenerSaldo(0, lista);
+    cantidad = calcularCantidadAutomatica(saldo, precio);
+    if(cantidad <= 0){
+        mostrarMensajeOperacion("Saldo insuficiente.\n");
+        return;
+    }
 
-    system(comando.c_str());
-    msg = "Compra realizada";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
+    costoTotal = calcularCostoOperacion(precio, cantidad);
+    if(saldoSuficiente(saldo, costoTotal) == false){
+        mostrarMensajeOperacion("Saldo insuficiente.\n");
+        return;
+    }
+
+    endpoint = obtenerEndpointOperacion(indiceApi, lista);
+    if(endpoint.empty()){
+        mostrarMensajeOperacion("Endpoint invalido.\n");
+        return;
+    }
+
+    datos = construirJsonOperacion(simbolo, cantidad);
+
+    if(ejecutarOperacionPost(endpoint, datos)){
+        respuesta = leerRespuestaJson();
+        mostrarMensajeOperacion("Compra automatica realizada.\n");
+
+        if(respuesta.empty() == false){
+            mostrarMensajeOperacion("Respuesta del servidor:\n");
+            cout << respuesta << endl;
+        }
+    }else{
+        mostrarMensajeOperacion("Error en compra automatica.\n");
+    }
 }
 
-//##### Modulo . #####
-void venta(int opcion, int indiceApi, apisWeb lista){
-    //recive la opcion del tipo de activo que se desea comprar, muestra el listado de activos de ese tipo que tienes para vender, pide el
-    //simbolo y la cantidad de ese activo que deseas vender y las vende en caso contrario muestra un mensaje
-    string simbolo;
-    int cantidad;
-    string msg;
-    string comando;
+//##### Modulo 121. #####
+//Realiza una venta automatica.
+void ejecutarVentaAutomatica(string simbolo, int indiceApi, apisWeb *lista){
     string endpoint;
+    string datos;
+    string respuesta;
+    double precioCompra;
+    int cantidad;
 
-    msg = "Ingrese simbolo: ";
-    cout << traduccion(config, &msg);
-    msg = msg;
-    cin >> simbolo;
-
-    if (!tengoActivo(simbolo, indiceApi, lista)) {
-        msg = "No posee este activo";
-        msg = traduccion(config, &msg);
-        cout << msg << endl;
+    if(tengoActivo(simbolo, indiceApi, lista) == false){
+        mostrarMensajeOperacion("No posee el activo.\n");
         return;
     }
 
-    msg = "Cantidad: ";
-    msg = traduccion(config, &msg);
-    cout << msg;
-    cin >> cantidad;
+    precioCompra = obtenerPrecioCompra(simbolo, indiceApi, lista);
+    cantidad = 1;
+    endpoint = obtenerEndpointOperacion(indiceApi, lista);
 
-    endpoint = lista.apis[indiceApi];
-    comando =
-        "curl -s -X POST \"" + endpoint + "\" "
-        "-H \"Authorization: Bearer " + token + "\" "
-        "-H \"Content-Type: application/json\" "
-        "-d \"{\\\"symbol\\\":\\\"" + simbolo +
-        "\\\",\\\"quantity\\\":" + to_string(cantidad) + "}\"";
-    system(comando.c_str());
-
-    msg = "Venta realizada";
-    msg = traduccion(config, &msg);
-    cout << msg << endl;
-}
-
-//##### Modulo . #####
-vector<double> obtenerHistorial(const string& simbolo){
-    vector<double> precios;
-    string respuesta;
-
-    respuesta = get(1, listaApis[0]); // suponiendo API precios
-    size_t pos = 0;
-
-    while ((pos = respuesta.find("price", pos)) != string::npos) {
-        string precioStr = extraerValor(respuesta.substr(pos), "price");
-        precios.push_back(atof(precioStr.c_str()));
-        pos += 10;
+    if(endpoint.empty()){
+        mostrarMensajeOperacion("Endpoint invalido.\n");
+        return;
     }
 
-    return precios;
-}
+    datos = construirJsonOperacion(simbolo, cantidad);
 
-//##### Modulo . #####
-double mediaMovil(const vector<double>& datos, int periodo){
-    double suma;
+    if(ejecutarOperacionPost(endpoint, datos)){
+        respuesta = leerRespuestaJson();
+        mostrarMensajeOperacion("Venta automatica realizada.\n");
 
-    if (datos.size() < periodo) {
-        return 0.0;
-    }
-    suma = 0.0;
-    for (int i = datos.size() - periodo; i < datos.size(); i++) {
-        suma += datos[i];
-    }
-
-    return suma / periodo;
-}
-
-//##### Modulo . #####
-double calcularRSI(const vector<double>& datos){
-    double ganancias;
-    double perdidas;
-    double cambio;
-    double rs;
-
-    if (datos.size() < 2) {
-        return 0.0;
-    }
-    ganancias = 0.0;
-    perdidas = 0.0;
-
-    for (size_t i = 1; i < datos.size(); i++) {
-        cambio = datos[i] - datos[i - 1];
-        if (cambio > 0){
-            ganancias += cambio;
+        if(respuesta.empty() == false){
+            mostrarMensajeOperacion("Respuesta del servidor:\n");
+            cout << respuesta << endl;
         }
-        else{
-            perdidas -= cambio;
+    }else{
+        mostrarMensajeOperacion("Error en venta automatica.\n");
+    }
+}
+
+//##### Modulo 122. #####
+//Evalua y ejecuta operaciones automaticas.
+void compraVentaAutomatica(string simbolo, int opcion, apisWeb *lista){
+    int indiceApi;
+    double precioCompra;
+
+    if(opcionOperacionValida(opcion) == false){
+        mostrarMensajeOperacion("Opcion invalida.\n");
+        return;
+    }
+
+    indiceApi = obtenerIndiceApiOperacion(opcion);
+
+    if(indiceApi < 0){
+        mostrarMensajeOperacion("API invalida.\n");
+        return;
+    }
+
+    if(evaluarCompra(simbolo, indiceApi, lista)){
+        ejecutarCompraAutomatica(simbolo, indiceApi, lista);
+        return;
+    }
+
+    if(tengoActivo(simbolo, indiceApi, lista)){
+        precioCompra = obtenerPrecioCompra(simbolo, indiceApi, lista);
+
+        if(evaluarVenta(simbolo, precioCompra, indiceApi, lista)){
+            ejecutarVentaAutomatica(simbolo, indiceApi, lista);
+            return;
         }
     }
 
-    if (perdidas == 0) {
-        return 100.0;
-    }
-    rs = ganancias / perdidas;
-    return 100 - (100 / (1 + rs));
-}
-    
-//##### Modulo . #####
-bool volumenAlto(const string& simbolo){
-    string respuesta;
-    string volumenStr;
-    double volumen;
-
-    respuesta = get(1, listaApis[0]);
-    volumenStr = extraerValor(respuesta, "volume");
-    volumen = atof(volumenStr.c_str());
-
-    return volumen > 1000000;
+    mostrarMensajeOperacion("No se encontraron oportunidades.\n");
 }
 
-//##### Modulo . #####
-double calcularEMA(const vector<double>& datos, int periodo){
-    double k;
-    double ema;
+//##### Modulo 123. #####
+//Verifica si existe el archivo de operaciones.
+bool existeArchivoOperaciones(){
+    ifstream archivo;
 
-    if (datos.size() < periodo) {
-        return 0.0;
-    }
-    k = 2.0 / (periodo + 1);
-    ema = datos[0];
-    for (size_t i = 1; i < datos.size(); i++) {
-        ema = datos[i] * k + ema * (1 - k);
-    }
-
-    return ema;
-}
-
-//##### Modulo . #####
-bool evaluarCompra(const string& simbolo){
-    vector<double> datos;
-    double rsi;
-    double ema;
-    double precioActual;
-
-    datos = obtenerHistorial(simbolo);
-    rsi = calcularRSI(datos);
-    ema = calcularEMA(datos, 10);
-    precioActual = datos.back();
-    if (rsi < 30 && precioActual > ema && volumenAlto(simbolo)) {
+    archivo.open("operaciones.txt");
+    if(archivo.is_open()){
+        archivo.close();
         return true;
     }
 
     return false;
 }
 
-//##### Modulo . #####
-bool evaluarVenta(const string& simbolo, double precioCompra){
-    vector<double> datos;
-    double rsi;
-    double precioActual;
-    double ganancia;
-
-    datos = obtenerHistorial(simbolo);
-    rsi = calcularRSI(datos);
-    precioActual = datos.back();
-    ganancia = (precioActual - precioCompra) / precioCompra;
-    if (rsi > 70 || ganancia > config.takeProfit || ganancia < -config.stopLoss) {
-        return true;
-    }
-
-    return false;
+//##### Modulo 124. #####
+//Muestra un mensaje traducido.
+void mostrarMensajeHistorial(string mensaje){
+    mensaje = traduccion(config, &mensaje);
+    cout << mensaje;
 }
 
-//##### Modulo . #####
-void compraVentaAutomatica(string simbolo, int opcion, apisWeb *lista[100]){
-    //recibe el simbolo, la opcion y la lista de apis busca la api correcta evaluando la opcion y el simbolo y opera
-}
-
-//##### Modulo . #####
-void verOperaciones(){
+//##### Modulo 125. #####
+//Muestra el encabezado del historial.
+void mostrarEncabezadoHistorial(){
     string msg;
 
-    ifstream archivo("operaciones.txt");
+    msg = "\n============================================================\n";
+    mostrarMensajeHistorial(msg);
+    msg = "               HISTORIAL DE OPERACIONES\n";
+    mostrarMensajeHistorial(msg);
+    msg = "============================================================\n";
+    mostrarMensajeHistorial(msg);
+}
 
-    if (!archivo.is_open()) {
-        msg = "No hay operaciones registradas";
-        cout << traduccion(config, &msg) << endl;
+//##### Modulo 126. #####
+//Muestra los titulos de las columnas.
+void mostrarColumnasHistorial(){
+    string tipo;
+    string simbolo;
+    string cantidad;
+    string precio;
+    string fecha;
+
+    tipo = "TIPO";
+    simbolo = "SIMBOLO";
+    cantidad = "CANTIDAD";
+    precio = "PRECIO";
+    fecha = "FECHA";
+
+    tipo = traduccion(config, &tipo);
+    simbolo = traduccion(config, &simbolo);
+    cantidad = traduccion(config, &cantidad);
+    precio = traduccion(config, &precio);
+    fecha = traduccion(config, &fecha);
+
+    cout << left << setw(15) << tipo << setw(15) << simbolo << setw(15) << cantidad << setw(15) << precio << setw(25) << fecha << endl;
+    cout << "------------------------------------------------------------";
+    cout << "-------------------------------\n";
+}
+
+//##### Modulo 127. #####
+//Separa una linea del historial en campos.
+bool separarOperacion(string linea, string &tipo, string &simbolo, string &cantidad, string &precio, string &fecha){
+    stringstream ss(linea);
+
+    getline(ss, tipo, ',');
+    getline(ss, simbolo, ',');
+    getline(ss, cantidad, ',');
+    getline(ss, precio, ',');
+    getline(ss, fecha, ',');
+
+    if(tipo.empty()){
+        return false;
+    }
+
+    return true;
+}
+
+//##### Modulo 128. #####
+//Muestra una operacion del historial.
+void mostrarOperacionHistorial(string tipo, string simbolo, string cantidad, string precio, string fecha){
+    cout << left << setw(15) << tipo << setw(15) << simbolo << setw(15) << cantidad << setw(15) << precio << setw(25) << fecha << endl;
+}
+
+//##### Modulo 129. #####
+//Muestra el pie del historial.
+void mostrarPieHistorial(){
+    string msg;
+
+    msg = "============================================================\n";
+    mostrarMensajeHistorial(msg);
+}
+
+//##### Modulo 130. #####
+//Muestra el historial completo de operaciones.
+void verOperaciones(){
+    ifstream archivo;
+    string linea;
+    string tipo;
+    string simbolo;
+    string cantidad;
+    string precio;
+    string fecha;
+    string msg;
+
+    if(existeArchivoOperaciones() == false){
+        msg = "No hay operaciones registradas.\n";
+        mostrarMensajeHistorial(msg);
         return;
     }
 
-    msg = "\n===== HISTORIAL DE OPERACIONES =====";
-    cout << traduccion(config, &msg) << endl;
+    archivo.open("operaciones.txt");
+    if(!archivo.is_open()){
+        msg = "No se pudo abrir el archivo de operaciones.\n";
+        mostrarMensajeHistorial(msg);
+        return;
+    }
 
-    msg = "TIPO | SIMBOLO | CANTIDAD | PRECIO";
-    cout << traduccion(config, &msg) << endl;
+    mostrarEncabezadoHistorial();
+    mostrarColumnasHistorial();
 
-    cout << "------------------------------------------\n";
-
-    string linea;
-
-    while (getline(archivo, linea)) {
-
-        // Se espera formato: tipo,simbolo,cantidad,precio
-        stringstream ss(linea);
-        string tipo, simbolo, cantidad, precio;
-
-        getline(ss, tipo, ',');
-        getline(ss, simbolo, ',');
-        getline(ss, cantidad, ',');
-        getline(ss, precio, ',');
-
-        cout << tipo << " | "
-             << simbolo << " | "
-             << cantidad << " | "
-             << precio << endl;
+    while(getline(archivo, linea)){
+        if(separarOperacion(linea, tipo, simbolo, cantidad, precio, fecha)){
+            mostrarOperacionHistorial(tipo, simbolo, cantidad, precio, fecha);
+        }
     }
 
     archivo.close();
+    mostrarPieHistorial();
+}
+//===============================================================================
+// Se han modificado y completado hasta el modulo 130, se deben seguir modificando
+// y completando (o directamente desarrollar) los modulos del 131 en adelante.
+// Este comentario solo se usa como marca par determinar hasta donde se hizo y
+// desde donde se debe seguir por lo que si se avanza de debe cambiar de lugar 
+// y modificar (o borrar si es que ya se termino).
+//===============================================================================
 
-    msg = "==========================================";
-    cout << traduccion(config, &msg) << endl;
+//##### Modulo 150. #####
+//Muestra el titulo principal del sistema.
+void mostrarTituloPrincipal(){
+    cout << "\n=================================\n";
+    mostrarMensaje("BOT INVERSION IOL\n");
+    cout << "=================================\n";
 }
 
-//##### Modulo . #####
+//##### Modulo 151. #####
+//Solicita una opcion numerica.
+int pedirOpcionMenu(){
+    int opcion;
+
+    mostrarMensaje("Seleccione una opcion: ");
+    cin >> opcion;
+    cin.ignore();
+
+    return opcion;
+}
+
+//##### Modulo 152. #####
+//Muestra un separador visual.
+void mostrarSeparadorMenu(){
+    cout << "---------------------------------\n";
+}
+
+//##### Modulo 153. #####
+//Muestra el menu principal.
+void mostrarMenuPrincipal(){
+    mostrarTituloPrincipal();
+    mostrarMensaje("1  - Estado de cuenta\n");
+    mostrarMensaje("2  - Acciones\n");
+    mostrarMensaje("3  - CEDEARs\n");
+    mostrarMensaje("4  - Bonos\n");
+    mostrarMensaje("5  - Opciones\n");
+    mostrarMensaje("6  - Cauciones\n");
+    mostrarMensaje("7  - FCI\n");
+    mostrarMensaje("8  - ON\n");
+    mostrarMensaje("9  - Portafolios\n");
+    mostrarMensaje("10 - Dolar MEP\n");
+    mostrarMensaje("11 - Licitaciones\n");
+    mostrarMensaje("12 - Configuracion\n");
+    mostrarMensaje("13 - Salir\n");
+    mostrarSeparadorMenu();
+}
+
+//##### Modulo 154. #####
+//Muestra el submenu de operaciones.
+void mostrarSubmenuOperaciones(){
+    mostrarMensaje("\n--- OPERAR ---\n");
+    mostrarMensaje("1. Comprar\n");
+    mostrarMensaje("2. Vender\n");
+    mostrarMensaje("3. Ver operaciones\n");
+    mostrarMensaje("4. Trading automatico\n");
+    mostrarMensaje("5. Volver\n");
+}
+
+//##### Modulo 155. #####
+//Muestra el menu de activos.
+void mostrarMenuActivo(string nombre){
+    string titulo;
+
+    titulo = "\n=== " + nombre + " ===\n";
+    mostrarMensaje(titulo);
+    mostrarMensaje("1. Ver lista de activos\n");
+    mostrarMensaje("2. Operar\n");
+    mostrarMensaje("3. Volver\n");
+}
+
+//##### Modulo 156. #####
+//Ejecuta una opcion del submenu de operaciones.
+void ejecutarOpcionOperaciones(int opcion, int opcionMenu){
+    switch(opcion){
+        case 1:
+            compra(opcionMenu, opcionMenu, listaApis[0]);
+            break;
+
+        case 2:
+            venta(opcionMenu, opcionMenu, listaApis[0]
+            );
+            break;
+
+        case 3:
+            verOperaciones();
+            break;
+
+        case 4:
+            compraVentaAutomatica(pedirSimbolo(), opcionMenu, listaApis[0]);
+            break;
+
+        case 5:
+            mostrarMensaje("Volviendo...\n");
+            break;
+
+        default:
+            mostrarMensaje("Opcion invalida.\n");
+    }
+}
+
+//##### Modulo 157. #####
+//Submenu de operaciones.
 void submenuOperaciones(int opcionMenu){
     int opcion;
-    string msg;
+    string refreshToken;
 
-    do {
-        msg = "\n--- OPERAR ---\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "1. Comprar\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "2. Vender\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "3. Ver operaciones\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "4. Trading automatico\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "5. Volver\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "Opcion: ";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
+    do{
+        mostrarSubmenuOperaciones();
+        mostrarMensaje("Opcion: ");
         cin >> opcion;
-
-        string refresh_local;
-        conseguirToken(&token, &refresh_local);
-
-        switch (opcion) {
-            case 1: 
-                compra(); 
-                break;
-            case 2: 
-                venta(); 
-                break;
-            case 3: 
-                verOperaciones(); 
-                break;
-            case 4: 
-                compraVentaAutomatica(); 
-                break;
-            case 5:
-                msg = "Volviendo...\n";
-                msg = traduccion(config, &msg);
-                cout << msg;
-                break;
-
-            default:
-                msg = "Opcion invalida\n";
-                msg = traduccion(config, &msg);
-                cout << msg;
-        }
-
-    } while (opcion != 5);
+        cin.ignore();
+        conseguirToken(&tokenRefreshToken.token, &refreshToken);
+        ejecutarOpcionOperaciones(opcion, opcionMenu);
+    }while(opcion != 5);
 }
 
-//##### Modulo . #####
-void menuActivo(int opcionMenu, const string& nombre){
+//##### Modulo 158. #####
+//Ejecuta una opcion del menu de activos.
+void ejecutarOpcionActivo(int opcion, int opcionMenu){
+    switch(opcion){
+        case 1:
+            mostrar(opcionMenu);
+            break;
+
+        case 2:
+            submenuOperaciones(opcionMenu);
+            break;
+
+        case 3:
+            mostrarMensaje("Volviendo...\n");
+            break;
+
+        default:
+            mostrarMensaje("Opcion invalida.\n");
+    }
+}
+
+//##### Modulo 159. #####
+//Menu de activos.
+void menuActivo(int opcionMenu, string nombre){
     int opcion;
-    string msg;
 
-    do {
-        msg = "\n=== " + nombre + " ===\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "1. Ver lista de activos\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "2. Operar\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "3. Volver\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "Opcion: ";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
+    do{
+        mostrarMenuActivo(nombre);
+        mostrarMensaje("Opcion: ");
         cin >> opcion;
-
-        switch (opcion) {
-            case 1: 
-                mostrar(opcionMenu); 
-                break;
-            case 2: 
-                submenuOperaciones(opcionMenu); 
-                break;
-            case 3:
-                msg = "Volviendo...\n";
-                msg = traduccion(config, &msg);
-                cout << msg;
-                break;
-
-            default:
-                msg = "Opcion invalida\n";
-                msg = traduccion(config, &msg);
-                cout << msg;
-        }
-
-    } while (opcion != 3);
+        cin.ignore();
+        ejecutarOpcionActivo(opcion, opcionMenu);
+    }while(opcion != 3);
 }
 
-//##### Modulo . #####
+//##### Modulo 160. #####
+//Ejecuta una opcion del menu principal.
+bool ejecutarOpcionPrincipal(int opcion){
+    switch(opcion){
+        case 1:
+            mostrar(1);
+            break;
+
+        case 2:
+            menuActivo(2, "Acciones");
+            break;
+
+        case 3:
+            menuActivo(3, "CEDEARs");
+            break;
+
+        case 4:
+            menuActivo(4, "Bonos");
+            break;
+
+        case 5:
+            menuActivo(5, "Opciones");
+            break;
+
+        case 6:
+            menuActivo(6, "Cauciones");
+            break;
+
+        case 7:
+            menuActivo(7, "FCI");
+            break;
+
+        case 8:
+            menuActivo(8, "ON");
+            break;
+
+        case 9:
+            menuActivo(9, "Portafolios");
+            break;
+
+        case 10:
+            menuActivo(10, "Dolar MEP");
+            break;
+
+        case 11:
+            menuActivo(11, "Licitaciones");
+            break;
+
+        case 12:
+            menuConfiguracion();
+            break;
+
+        case 13:
+            mostrarMensaje("Cerrando sistema...\n");
+
+            return false;
+
+        default:
+            mostrarMensaje("Opcion invalida.\n");
+    }
+
+    return true;
+}
+
+//##### Modulo 161. #####
+//Menu principal del sistema.
 void menuPrincipal(){
     int opcion;
-    string msg;
+    bool continuar;
 
-    do {
-        cout << "\n=================================\n";
-        msg = "BOT INVERSION IOL\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-        cout << "=================================\n";
+    continuar = true;
 
-        msg = "1  - Estado de cuenta\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "2  - Acciones\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "3  - CEDEARs\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "4  - Bonos\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "5  - Opciones\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "6  - Cauciones\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "7  - FCI\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "8  - ON\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "9  - Portafolios\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "10 - Dolar MEP\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "11 - Licitaciones\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "12 - Configuracion\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        msg = "13 - Salir\n";
-        msg = traduccion(config, &msg);
-        cout << msg;
-
-        cout << "---------------------------------\n";
-        msg = "Seleccione una opcion: ";
-        msg = traduccion(config, &msg);
-        cout << msg;
-        cin >> opcion;
-
-        switch (opcion) {
-            case 1: 
-                mostrar(1); 
-                break;
-            case 2: 
-                menuActivo(2, "Acciones"); 
-                break;
-            case 3: 
-                menuActivo(3, "CEDEARs"); 
-                break;
-            case 4: 
-                menuActivo(4, "Bonos"); 
-                break;
-            case 5: 
-                menuActivo(5, "Opciones"); 
-                break;
-            case 6: 
-                menuActivo(6, "Cauciones"); 
-                break;
-            case 7: 
-                menuActivo(7, "FCI"); 
-                break;
-            case 8: 
-                menuActivo(8, "ON"); 
-                break;
-            case 9: 
-                menuActivo(9, "Portafolios"); 
-                break;
-            case 10: 
-                menuActivo(10, "DolarMEP"); 
-                break;
-            case 11: 
-                menuActivo(11, "Licitaciones"); 
-                break;
-            case 12: 
-                menuConfiguracion(); 
-                break;
-            case 13:
-                msg = "Cerrando sistema...\n";
-                msg = traduccion(config, &msg);
-                cout << msg;
-                break;
-
-            default:
-                msg = "Opcion invalida\n";
-                msg = traduccion(config, &msg);
-                cout << msg;
-        }
-
-    } while (opcion != 13);
+    do{
+        mostrarMenuPrincipal();
+        opcion = pedirOpcionMenu();
+        continuar = ejecutarOpcionPrincipal(opcion);
+    }while(continuar);
 }
 
-//##### Modulo (funcion principal). #####
-//Se ejecutan los comandos necesarios para que el program se ejecute y funcione
+//##### Modulo 162. #####
+//Solicita las credenciales del usuario.
+void pedirCredenciales(){
+    mostrarMensaje("Ingrese usuario: ");
+    getline(cin, configurar[0].credenciales.usuario);
+    mostrarMensaje("Ingrese password: ");
+    getline(cin, configurar[0].credenciales.password);
+}
+
+//##### Modulo 163. #####
+//Inicia sesion en el sistema.
+bool iniciarSesionSistema(){
+    if(login(configurar[0].credenciales.usuario, configurar[0].credenciales.password) == false){
+        mostrarMensaje("No se pudo iniciar sesion.\n");
+
+        return false;
+    }
+
+    return true;
+}
+
+//##### Modulo 164 (modul principal main). #####
+//Inicializa y ejecuta el sistema.
 int main(){
-    string msg;
-
-    // Inicializar configuración y APIs
     inicializarSistema(&config, &configurar, &listApis, listaApis);
+    pedirCredenciales();
 
-    // Pedir credenciales
-    msg = "Ingrese usuario: ";
-    cout << traduccion(config, &msg);
-    cin >> usuario;
-
-    msg = "Ingrese password: ";
-    cout << traduccion(config, &msg);
-    cin >> password;
-
-    // Login
-    if (!login(usuario, password)) {
-        msg = "No se pudo iniciar sesion\n";
-        cout << traduccion(config, &msg);
+    if(iniciarSesionSistema() == false){
         return 1;
     }
 
-    // Lanzar menú principal
     menuPrincipal();
 
     return 0;
