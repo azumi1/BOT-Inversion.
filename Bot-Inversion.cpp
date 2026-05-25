@@ -125,9 +125,2369 @@ bool hayApisCargadas(FILE* g) {
 }
 
 //##### Modulo 3. #####
-//Trduce el texto que el programa muestra, para eso recibiendo el mensaje a traducir y la configuracion para ver a que idioma se debe traducir.
-string traduccion (configuracion conf, string* ms){
+//Traduce el texto segun el idioma configurado.
+string traduccion(configuracion conf, string *ms){
+    string texto;
 
+    texto = *ms;
+
+    // 1 - ESPAÑOL
+    if(conf.idioma == "es"){        //El idioma del bot es español por defecto asi que retorna el mensaje tal como esta.
+        return texto;
+    }
+
+    // 2 - INGLES
+    else if(conf.idioma == "en"){   //Si el idioma es otro distinto al idioma por defecto del bot se lo traduce al idioma correspondiente.
+                // LOGIN
+        if(texto == "Ingrese usuario: "){
+            return "Enter username: ";
+        }
+
+        else if(texto == "Ingrese password: "){
+            return "Enter password: ";
+        }
+
+        else if(texto == "No se pudo iniciar sesion\n"){
+            return "Could not login\n";
+        }
+
+        else if(texto == "No se encontro endpoint de token.\n"){
+            return "Token endpoint not found.\n";
+        }
+
+        else if(texto == "No se pudo leer token.json.\n"){
+            return "Could not read token.json.\n";
+        }
+
+        else if(texto == "Token obtenido correctamente.\n"){
+            return "Token obtained successfully.\n";
+        }
+
+        else if(texto == "Error al obtener token.\n"){
+            return "Error obtaining token.\n";
+        }
+
+        else if(texto == "Respuesta del servidor:\n"){
+            return "Server response:\n";
+        }
+
+        else if(texto == "Error en login.\n"){
+            return "Login error.\n";
+        }
+
+        else if(texto == "Login exitoso.\n"){
+            return "Login successful.\n";
+        }
+
+        // MENU PRINCIPAL
+        else if(texto == "BOT INVERSION IOL\n"){
+            return "IOL INVESTMENT BOT\n";
+        }
+
+        else if(texto == "1  - Estado de cuenta\n"){
+            return "1  - Account status\n";
+        }
+
+        else if(texto == "2  - Acciones\n"){
+            return "2  - Stocks\n";
+        }
+
+        else if(texto == "3  - CEDEARs\n"){
+            return "3  - CEDEARs\n";
+        }
+
+        else if(texto == "4  - Bonos\n"){
+            return "4  - Bonds\n";
+        }
+
+        else if(texto == "5  - Opciones\n"){
+            return "5  - Options\n";
+        }
+
+        else if(texto == "6  - Cauciones\n"){
+            return "6  - Repo operations\n";
+        }
+
+        else if(texto == "7  - FCI\n"){
+            return "7  - Mutual Funds\n";
+        }
+
+        else if(texto == "8  - ON\n"){
+            return "8  - Corporate Bonds\n";
+        }
+
+        else if(texto == "9  - Portafolios\n"){
+            return "9  - Portfolios\n";
+        }
+
+        else if(texto == "10 - Dolar MEP\n"){
+            return "10 - MEP Dollar\n";
+        }
+
+        else if(texto == "11 - Licitaciones\n"){
+            return "11 - Auctions\n";
+        }
+
+        else if(texto == "12 - Configuracion\n"){
+            return "12 - Settings\n";
+        }
+
+        else if(texto == "13 - Salir\n"){
+            return "13 - Exit\n";
+        }
+
+        else if(texto == "Seleccione una opcion: "){
+            return "Select an option: ";
+        }
+
+        else if(texto == "Opcion: "){
+            return "Option: ";
+        }
+
+        else if(texto == "Opcion invalida\n"){
+            return "Invalid option\n";
+        }
+
+        else if(texto == "Volviendo...\n"){
+            return "Returning...\n";
+        }
+
+        else if(texto == "Cerrando sistema...\n"){
+            return "Closing system...\n";
+        }
+
+        // MENU ACTIVOS
+        else if(texto == "1. Ver lista de activos\n"){
+            return "1. View asset list\n";
+        }
+
+        else if(texto == "2. Operar\n"){
+            return "2. Trade\n";
+        }
+
+        else if(texto == "3. Volver\n"){
+            return "3. Return\n";
+        }
+
+        // SUBMENU OPERACIONES
+        else if(texto == "\n--- OPERAR ---\n"){
+            return "\n--- TRADE ---\n";
+        }
+
+        else if(texto == "1. Comprar\n"){
+            return "1. Buy\n";
+        }
+
+        else if(texto == "2. Vender\n"){
+            return "2. Sell\n";
+        }
+
+        else if(texto == "3. Ver operaciones\n"){
+            return "3. View operations\n";
+        }
+
+        else if(texto == "4. Trading automatico\n"){
+            return "4. Automatic trading\n";
+        }
+
+        else if(texto == "5. Volver\n"){
+            return "5. Return\n";
+        }
+
+        // MENSAJES GENERALES
+        else if(texto == "No hay informacion para mostrar.\n"){
+            return "No information available to display.\n";
+        }
+
+        else if(texto == "No se encontraron datos validos.\n"){
+            return "No valid data found.\n";
+        }
+
+        else if(texto == "POST ejecutado correctamente.\n"){
+            return "POST executed successfully.\n";
+        }
+
+        else if(texto == "Error al ejecutar POST.\n"){
+            return "Error executing POST.\n";
+        }
+
+        else if(texto == "Indice de API invalido.\n"){
+            return "Invalid API index.\n";
+        }
+
+        else if(texto == "Endpoint invalido.\n"){
+            return "Invalid endpoint.\n";
+        }
+
+        else if(texto == "API invalida.\n"){
+            return "Invalid API.\n";
+        }
+
+        // INPUTS
+        else if(texto == "Simbolo: "){
+            return "Symbol: ";
+        }
+
+        else if(texto == "Cantidad: "){
+            return "Quantity: ";
+        }
+
+        else if(texto == "Datos JSON: "){
+            return "JSON data: ";
+        }
+
+        // VALIDACIONES
+        else if(texto == "Simbolo invalido.\n"){
+            return "Invalid symbol.\n";
+        }
+
+        else if(texto == "Cantidad invalida.\n"){
+            return "Invalid quantity.\n";
+        }
+
+        else if(texto == "Saldo insuficiente.\n"){
+            return "Insufficient balance.\n";
+        }
+
+        else if(texto == "No se pudo obtener el precio.\n"){
+            return "Could not obtain price.\n";
+        }
+
+        else if(texto == "No posee este activo.\n"){
+            return "You do not own this asset.\n";
+        }
+
+        else if(texto == "No posee el activo.\n"){
+            return "You do not own the asset.\n";
+        }
+
+        // OPERACIONES
+        else if(texto == "Compra realizada correctamente.\n"){
+            return "Purchase completed successfully.\n";
+        }
+
+        else if(texto == "Error al realizar la compra.\n"){
+            return "Error performing purchase.\n";
+        }
+
+        else if(texto == "Venta realizada correctamente.\n"){
+            return "Sale completed successfully.\n";
+        }
+
+        else if(texto == "Error al realizar la venta.\n"){
+            return "Error performing sale.\n";
+        }
+
+        else if(texto == "Compra automatica realizada.\n"){
+            return "Automatic purchase completed.\n";
+        }
+
+        else if(texto == "Venta automatica realizada.\n"){
+            return "Automatic sale completed.\n";
+        }
+
+        else if(texto == "Error en compra automatica.\n"){
+            return "Automatic purchase error.\n";
+        }
+
+        else if(texto == "Error en venta automatica.\n"){
+            return "Automatic sale error.\n";
+        }
+
+        else if(texto == "No se encontraron oportunidades.\n"){
+            return "No opportunities found.\n";
+        }
+
+        // HISTORIAL
+        else if(texto == "No hay operaciones registradas.\n"){
+            return "No operations registered.\n";
+        }
+
+        else if(texto == "No se pudo abrir el archivo de operaciones.\n"){
+            return "Could not open operations file.\n";
+        }
+
+        else if(texto == "               HISTORIAL DE OPERACIONES\n"){
+            return "               OPERATION HISTORY\n";
+        }
+
+        else if(texto == "TIPO"){
+            return "TYPE";
+        }
+
+        else if(texto == "SIMBOLO"){
+            return "SYMBOL";
+        }
+
+        else if(texto == "CANTIDAD"){
+            return "QUANTITY";
+        }
+
+        else if(texto == "PRECIO"){
+            return "PRICE";
+        }
+
+        else if(texto == "FECHA"){
+            return "DATE";
+        }
+                if(texto == "No se encontro endpoint de token.\n"){
+            texto = "Token endpoint not found.\n";
+        }else if(texto == "No se pudo leer token.json.\n"){
+            texto = "Could not read token.json.\n";
+        }else if(texto == "Token obtenido correctamente.\n"){
+            texto = "Token obtained successfully.\n";
+        }else if(texto == "Error al obtener token.\n"){
+            texto = "Error obtaining token.\n";
+        }else if(texto == "Respuesta del servidor:\n"){
+            texto = "Server response:\n";
+        }else if(texto == "Error en login.\n"){
+            texto = "Login error.\n";
+        }else if(texto == "Login exitoso.\n"){
+            texto = "Login successful.\n";
+        }else if(texto == "Simbolo: "){
+            texto = "Symbol: ";
+        }else if(texto == "Datos JSON: "){
+            texto = "JSON data: ";
+        }else if(texto == "Indice de API invalido.\n"){
+            texto = "Invalid API index.\n";
+        }else if(texto == "POST ejecutado correctamente.\n"){
+            texto = "POST executed successfully.\n";
+        }else if(texto == "Error al ejecutar POST.\n"){
+            texto = "Error executing POST.\n";
+        }else if(texto == "No hay informacion para mostrar.\n"){
+            texto = "No information to display.\n";
+        }else if(texto == "No se encontraron datos validos.\n"){
+            texto = "No valid data found.\n";
+        }else if(texto == "Cantidad: "){
+            texto = "Quantity: ";
+        }else if(texto == "Simbolo invalido.\n"){
+            texto = "Invalid symbol.\n";
+        }else if(texto == "Cantidad invalida.\n"){
+            texto = "Invalid quantity.\n";
+        }else if(texto == "No se pudo obtener el precio.\n"){
+            texto = "Could not obtain the price.\n";
+        }else if(texto == "Saldo insuficiente.\n"){
+            texto = "Insufficient balance.\n";
+        }else if(texto == "Endpoint invalido.\n"){
+            texto = "Invalid endpoint.\n";
+        }else if(texto == "No posee este activo.\n"){
+            texto = "You do not own this asset.\n";
+        }else if(texto == "Compra realizada correctamente.\n"){
+            texto = "Purchase completed successfully.\n";
+        }else if(texto == "Error al realizar la compra.\n"){
+            texto = "Error performing purchase.\n";
+        }else if(texto == "Venta realizada correctamente.\n"){
+            texto = "Sale completed successfully.\n";
+        }else if(texto == "Error al realizar la venta.\n"){
+            texto = "Error performing sale.\n";
+        }else if(texto == "No posee el activo.\n"){
+            texto = "You do not own the asset.\n";
+        }else if(texto == "Compra automatica realizada.\n"){
+            texto = "Automatic purchase completed.\n";
+        }else if(texto == "Error en compra automatica.\n"){
+            texto = "Error in automatic purchase.\n";
+        }else if(texto == "Venta automatica realizada.\n"){
+            texto = "Automatic sale completed.\n";
+        }else if(texto == "Error en venta automatica.\n"){
+            texto = "Error in automatic sale.\n";
+        }else if(texto == "Opcion invalida.\n"){
+            texto = "Invalid option.\n";
+        }else if(texto == "API invalida.\n"){
+            texto = "Invalid API.\n";
+        }else if(texto == "No se encontraron oportunidades.\n"){
+            texto = "No opportunities found.\n";
+        }else if(texto == "No hay operaciones registradas.\n"){
+            texto = "No registered operations.\n";
+        }else if(texto == "No se pudo abrir el archivo de operaciones.\n"){
+            texto = "Could not open operations file.\n";
+        }else if(texto == "               HISTORIAL DE OPERACIONES\n"){
+            texto = "               OPERATIONS HISTORY\n";
+        }else if(texto == "TIPO"){
+            texto = "TYPE";
+        }else if(texto == "SIMBOLO"){
+            texto = "SYMBOL";
+        }else if(texto == "CANTIDAD"){
+            texto = "QUANTITY";
+        }else if(texto == "PRECIO"){
+            texto = "PRICE";
+        }else if(texto == "FECHA"){
+            texto = "DATE";
+        }else if(texto == "\n--- OPERAR ---\n"){
+            texto = "\n--- TRADE ---\n";
+        }else if(texto == "1. Comprar\n"){
+            texto = "1. Buy\n";
+        }else if(texto == "2. Vender\n"){
+            texto = "2. Sell\n";
+        }else if(texto == "3. Ver operaciones\n"){
+            texto = "3. View operations\n";
+        }else if(texto == "4. Trading automatico\n"){
+            texto = "4. Automatic trading\n";
+        }else if(texto == "5. Volver\n"){
+            texto = "5. Back\n";
+        }else if(texto == "Opcion: "){
+            texto = "Option: ";
+        }else if(texto == "Volviendo...\n"){
+            texto = "Returning...\n";
+        }else if(texto == "\n=== Acciones ===\n"){
+            texto = "\n=== Stocks ===\n";
+        }else if(texto == "\n=== CEDEARs ===\n"){
+            texto = "\n=== CEDEARs ===\n";
+        }else if(texto == "\n=== Bonos ===\n"){
+            texto = "\n=== Bonds ===\n";
+        }else if(texto == "\n=== Opciones ===\n"){
+            texto = "\n=== Options ===\n";
+        }else if(texto == "\n=== Cauciones ===\n"){
+            texto = "\n=== Repo Operations ===\n";
+        }else if(texto == "\n=== FCI ===\n"){
+            texto = "\n=== Mutual Funds ===\n";
+        }else if(texto == "\n=== ON ===\n"){
+            texto = "\n=== Corporate Bonds ===\n";
+        }else if(texto == "\n=== Portafolios ===\n"){
+            texto = "\n=== Portfolios ===\n";
+        }else if(texto == "\n=== DolarMEP ===\n"){
+            texto = "\n=== MEP Dollar ===\n";
+        }else if(texto == "\n=== Licitaciones ===\n"){
+            texto = "\n=== Tenders ===\n";
+        }else if(texto == "1. Ver lista de activos\n"){
+            texto = "1. View asset list\n";
+        }else if(texto == "2. Operar\n"){
+            texto = "2. Trade\n";
+        }else if(texto == "\n=================================\n"){
+            texto = "\n=================================\n";
+        }else if(texto == "BOT INVERSION IOL\n"){
+            texto = "IOL INVESTMENT BOT\n";
+        }else if(texto == "1  - Estado de cuenta\n"){
+            texto = "1  - Account status\n";
+        }else if(texto == "2  - Acciones\n"){
+            texto = "2  - Stocks\n";
+        }else if(texto == "3  - CEDEARs\n"){
+            texto = "3  - CEDEARs\n";
+        }else if(texto == "4  - Bonos\n"){
+            texto = "4  - Bonds\n";
+        }else if(texto == "5  - Opciones\n"){
+            texto = "5  - Options\n";
+        }else if(texto == "6  - Cauciones\n"){
+            texto = "6  - Repo Operations\n";
+        }else if(texto == "7  - FCI\n"){
+            texto = "7  - Mutual Funds\n";
+        }else if(texto == "8  - ON\n"){
+            texto = "8  - Corporate Bonds\n";
+        }else if(texto == "9  - Portafolios\n"){
+            texto = "9  - Portfolios\n";
+        }else if(texto == "10 - Dolar MEP\n"){
+            texto = "10 - MEP Dollar\n";
+        }else if(texto == "11 - Licitaciones\n"){
+            texto = "11 - Tenders\n";
+        }else if(texto == "12 - Configuracion\n"){
+            texto = "12 - Settings\n";
+        }else if(texto == "13 - Salir\n"){
+            texto = "13 - Exit\n";
+        }else if(texto == "Seleccione una opcion: "){
+            texto = "Select an option: ";
+        }else if(texto == "Cerrando sistema...\n"){
+            texto = "Closing system...\n";
+        }else if(texto == "Ingrese usuario: "){
+            texto = "Enter username: ";
+        }else if(texto == "Ingrese password: "){
+            texto = "Enter password: ";
+        }else if(texto == "No se pudo iniciar sesion\n"){
+            texto = "Could not log in.\n";
+        }
+    }
+
+    // 3 - PORTUGUES
+    else if(conf.idioma == "pt"){
+                if(texto == "No se encontro endpoint de token.\n"){
+            texto = "Endpoint do token nao encontrado.\n";
+        }else if(texto == "No se pudo leer token.json.\n"){
+            texto = "Nao foi possivel ler token.json.\n";
+        }else if(texto == "Token obtenido correctamente.\n"){
+            texto = "Token obtido com sucesso.\n";
+        }else if(texto == "Error al obtener token.\n"){
+            texto = "Erro ao obter token.\n";
+        }else if(texto == "Respuesta del servidor:\n"){
+            texto = "Resposta do servidor:\n";
+        }else if(texto == "Error en login.\n"){
+            texto = "Erro no login.\n";
+        }else if(texto == "Login exitoso.\n"){
+            texto = "Login realizado com sucesso.\n";
+        }else if(texto == "Simbolo: "){
+            texto = "Simbolo: ";
+        }else if(texto == "Datos JSON: "){
+            texto = "Dados JSON: ";
+        }else if(texto == "Indice de API invalido.\n"){
+            texto = "Indice de API invalido.\n";
+        }else if(texto == "POST ejecutado correctamente.\n"){
+            texto = "POST executado com sucesso.\n";
+        }else if(texto == "Error al ejecutar POST.\n"){
+            texto = "Erro ao executar POST.\n";
+        }else if(texto == "No hay informacion para mostrar.\n"){
+            texto = "Nao ha informacoes para mostrar.\n";
+        }else if(texto == "No se encontraron datos validos.\n"){
+            texto = "Nenhum dado valido encontrado.\n";
+        }else if(texto == "Cantidad: "){
+            texto = "Quantidade: ";
+        }else if(texto == "Simbolo invalido.\n"){
+            texto = "Simbolo invalido.\n";
+        }else if(texto == "Cantidad invalida.\n"){
+            texto = "Quantidade invalida.\n";
+        }else if(texto == "No se pudo obtener el precio.\n"){
+            texto = "Nao foi possivel obter o preco.\n";
+        }else if(texto == "Saldo insuficiente.\n"){
+            texto = "Saldo insuficiente.\n";
+        }else if(texto == "Endpoint invalido.\n"){
+            texto = "Endpoint invalido.\n";
+        }else if(texto == "No posee este activo.\n"){
+            texto = "Voce nao possui este ativo.\n";
+        }else if(texto == "Compra realizada correctamente.\n"){
+            texto = "Compra realizada com sucesso.\n";
+        }else if(texto == "Error al realizar la compra.\n"){
+            texto = "Erro ao realizar a compra.\n";
+        }else if(texto == "Venta realizada correctamente.\n"){
+            texto = "Venda realizada com sucesso.\n";
+        }else if(texto == "Error al realizar la venta.\n"){
+            texto = "Erro ao realizar a venda.\n";
+        }else if(texto == "No posee el activo.\n"){
+            texto = "Voce nao possui o ativo.\n";
+        }else if(texto == "Compra automatica realizada.\n"){
+            texto = "Compra automatica realizada.\n";
+        }else if(texto == "Error en compra automatica.\n"){
+            texto = "Erro na compra automatica.\n";
+        }else if(texto == "Venta automatica realizada.\n"){
+            texto = "Venda automatica realizada.\n";
+        }else if(texto == "Error en venta automatica.\n"){
+            texto = "Erro na venda automatica.\n";
+        }else if(texto == "Opcion invalida.\n"){
+            texto = "Opcao invalida.\n";
+        }else if(texto == "API invalida.\n"){
+            texto = "API invalida.\n";
+        }else if(texto == "No se encontraron oportunidades.\n"){
+            texto = "Nenhuma oportunidade encontrada.\n";
+        }else if(texto == "No hay operaciones registradas.\n"){
+            texto = "Nao ha operacoes registradas.\n";
+        }else if(texto == "No se pudo abrir el archivo de operaciones.\n"){
+            texto = "Nao foi possivel abrir o arquivo de operacoes.\n";
+        }else if(texto == "               HISTORIAL DE OPERACIONES\n"){
+            texto = "               HISTORICO DE OPERACOES\n";
+        }else if(texto == "TIPO"){
+            texto = "TIPO";
+        }else if(texto == "SIMBOLO"){
+            texto = "SIMBOLO";
+        }else if(texto == "CANTIDAD"){
+            texto = "QUANTIDADE";
+        }else if(texto == "PRECIO"){
+            texto = "PRECO";
+        }else if(texto == "FECHA"){
+            texto = "DATA";
+        }else if(texto == "\n--- OPERAR ---\n"){
+            texto = "\n--- OPERAR ---\n";
+        }else if(texto == "1. Comprar\n"){
+            texto = "1. Comprar\n";
+        }else if(texto == "2. Vender\n"){
+            texto = "2. Vender\n";
+        }else if(texto == "3. Ver operaciones\n"){
+            texto = "3. Ver operacoes\n";
+        }else if(texto == "4. Trading automatico\n"){
+            texto = "4. Trading automatico\n";
+        }else if(texto == "5. Volver\n"){
+            texto = "5. Voltar\n";
+        }else if(texto == "Opcion: "){
+            texto = "Opcao: ";
+        }else if(texto == "Volviendo...\n"){
+            texto = "Voltando...\n";
+        }else if(texto == "\n=== Acciones ===\n"){
+            texto = "\n=== Acoes ===\n";
+        }else if(texto == "\n=== CEDEARs ===\n"){
+            texto = "\n=== CEDEARs ===\n";
+        }else if(texto == "\n=== Bonos ===\n"){
+            texto = "\n=== Titulos ===\n";
+        }else if(texto == "\n=== Opciones ===\n"){
+            texto = "\n=== Opcoes ===\n";
+        }else if(texto == "\n=== Cauciones ===\n"){
+            texto = "\n=== Caucoes ===\n";
+        }else if(texto == "\n=== FCI ===\n"){
+            texto = "\n=== FCI ===\n";
+        }else if(texto == "\n=== ON ===\n"){
+            texto = "\n=== ON ===\n";
+        }else if(texto == "\n=== Portafolios ===\n"){
+            texto = "\n=== Portfolios ===\n";
+        }else if(texto == "\n=== DolarMEP ===\n"){
+            texto = "\n=== Dolar MEP ===\n";
+        }else if(texto == "\n=== Licitaciones ===\n"){
+            texto = "\n=== Licitacoes ===\n";
+        }else if(texto == "1. Ver lista de activos\n"){
+            texto = "1. Ver lista de ativos\n";
+        }else if(texto == "2. Operar\n"){
+            texto = "2. Operar\n";
+        }else if(texto == "BOT INVERSION IOL\n"){
+            texto = "BOT DE INVESTIMENTO IOL\n";
+        }else if(texto == "1  - Estado de cuenta\n"){
+            texto = "1  - Estado da conta\n";
+        }else if(texto == "2  - Acciones\n"){
+            texto = "2  - Acoes\n";
+        }else if(texto == "3  - CEDEARs\n"){
+            texto = "3  - CEDEARs\n";
+        }else if(texto == "4  - Bonos\n"){
+            texto = "4  - Titulos\n";
+        }else if(texto == "5  - Opciones\n"){
+            texto = "5  - Opcoes\n";
+        }else if(texto == "6  - Cauciones\n"){
+            texto = "6  - Caucoes\n";
+        }else if(texto == "7  - FCI\n"){
+            texto = "7  - FCI\n";
+        }else if(texto == "8  - ON\n"){
+            texto = "8  - ON\n";
+        }else if(texto == "9  - Portafolios\n"){
+            texto = "9  - Portfolios\n";
+        }else if(texto == "10 - Dolar MEP\n"){
+            texto = "10 - Dolar MEP\n";
+        }else if(texto == "11 - Licitaciones\n"){
+            texto = "11 - Licitacoes\n";
+        }else if(texto == "12 - Configuracion\n"){
+            texto = "12 - Configuracao\n";
+        }else if(texto == "13 - Salir\n"){
+            texto = "13 - Sair\n";
+        }else if(texto == "Seleccione una opcion: "){
+            texto = "Selecione uma opcao: ";
+        }else if(texto == "Cerrando sistema...\n"){
+            texto = "Fechando sistema...\n";
+        }else if(texto == "Ingrese usuario: "){
+            texto = "Digite o usuario: ";
+        }else if(texto == "Ingrese password: "){
+            texto = "Digite a senha: ";
+        }else if(texto == "No se pudo iniciar sesion\n"){
+            texto = "Nao foi possivel iniciar sessao.\n";
+        }
+    }
+
+    // 4 - FRANCES
+    else if(conf.idioma == "fr"){
+                if(texto == "No se encontro endpoint de token.\n"){
+            texto = "Point de terminaison du token introuvable.\n";
+        }else if(texto == "No se pudo leer token.json.\n"){
+            texto = "Impossible de lire token.json.\n";
+        }else if(texto == "Token obtenido correctamente.\n"){
+            texto = "Token obtenu avec succes.\n";
+        }else if(texto == "Error al obtener token.\n"){
+            texto = "Erreur lors de l'obtention du token.\n";
+        }else if(texto == "Respuesta del servidor:\n"){
+            texto = "Reponse du serveur:\n";
+        }else if(texto == "Error en login.\n"){
+            texto = "Erreur de connexion.\n";
+        }else if(texto == "Login exitoso.\n"){
+            texto = "Connexion reussie.\n";
+        }else if(texto == "Simbolo: "){
+            texto = "Symbole : ";
+        }else if(texto == "Datos JSON: "){
+            texto = "Donnees JSON : ";
+        }else if(texto == "Indice de API invalido.\n"){
+            texto = "Indice API invalide.\n";
+        }else if(texto == "POST ejecutado correctamente.\n"){
+            texto = "POST execute avec succes.\n";
+        }else if(texto == "Error al ejecutar POST.\n"){
+            texto = "Erreur lors de l'execution du POST.\n";
+        }else if(texto == "No hay informacion para mostrar.\n"){
+            texto = "Aucune information a afficher.\n";
+        }else if(texto == "No se encontraron datos validos.\n"){
+            texto = "Aucune donnee valide trouvee.\n";
+        }else if(texto == "Cantidad: "){
+            texto = "Quantite : ";
+        }else if(texto == "Simbolo invalido.\n"){
+            texto = "Symbole invalide.\n";
+        }else if(texto == "Cantidad invalida.\n"){
+            texto = "Quantite invalide.\n";
+        }else if(texto == "No se pudo obtener el precio.\n"){
+            texto = "Impossible d'obtenir le prix.\n";
+        }else if(texto == "Saldo insuficiente.\n"){
+            texto = "Solde insuffisant.\n";
+        }else if(texto == "Endpoint invalido.\n"){
+            texto = "Point de terminaison invalide.\n";
+        }else if(texto == "No posee este activo.\n"){
+            texto = "Vous ne possedez pas cet actif.\n";
+        }else if(texto == "Compra realizada correctamente.\n"){
+            texto = "Achat realise avec succes.\n";
+        }else if(texto == "Error al realizar la compra.\n"){
+            texto = "Erreur lors de l'achat.\n";
+        }else if(texto == "Venta realizada correctamente.\n"){
+            texto = "Vente realisee avec succes.\n";
+        }else if(texto == "Error al realizar la venta.\n"){
+            texto = "Erreur lors de la vente.\n";
+        }else if(texto == "No posee el activo.\n"){
+            texto = "Vous ne possedez pas l'actif.\n";
+        }else if(texto == "Compra automatica realizada.\n"){
+            texto = "Achat automatique realise.\n";
+        }else if(texto == "Error en compra automatica.\n"){
+            texto = "Erreur dans l'achat automatique.\n";
+        }else if(texto == "Venta automatica realizada.\n"){
+            texto = "Vente automatique realisee.\n";
+        }else if(texto == "Error en venta automatica.\n"){
+            texto = "Erreur dans la vente automatique.\n";
+        }else if(texto == "Opcion invalida.\n"){
+            texto = "Option invalide.\n";
+        }else if(texto == "API invalida.\n"){
+            texto = "API invalide.\n";
+        }else if(texto == "No se encontraron oportunidades.\n"){
+            texto = "Aucune opportunite trouvee.\n";
+        }else if(texto == "No hay operaciones registradas.\n"){
+            texto = "Aucune operation enregistree.\n";
+        }else if(texto == "No se pudo abrir el archivo de operaciones.\n"){
+            texto = "Impossible d'ouvrir le fichier des operations.\n";
+        }else if(texto == "               HISTORIAL DE OPERACIONES\n"){
+            texto = "               HISTORIQUE DES OPERATIONS\n";
+        }else if(texto == "TIPO"){
+            texto = "TYPE";
+        }else if(texto == "SIMBOLO"){
+            texto = "SYMBOLE";
+        }else if(texto == "CANTIDAD"){
+            texto = "QUANTITE";
+        }else if(texto == "PRECIO"){
+            texto = "PRIX";
+        }else if(texto == "FECHA"){
+            texto = "DATE";
+        }else if(texto == "\n--- OPERAR ---\n"){
+            texto = "\n--- TRADING ---\n";
+        }else if(texto == "1. Comprar\n"){
+            texto = "1. Acheter\n";
+        }else if(texto == "2. Vender\n"){
+            texto = "2. Vendre\n";
+        }else if(texto == "3. Ver operaciones\n"){
+            texto = "3. Voir les operations\n";
+        }else if(texto == "4. Trading automatico\n"){
+            texto = "4. Trading automatique\n";
+        }else if(texto == "5. Volver\n"){
+            texto = "5. Retour\n";
+        }else if(texto == "Opcion: "){
+            texto = "Option : ";
+        }else if(texto == "Volviendo...\n"){
+            texto = "Retour...\n";
+        }else if(texto == "\n=== Acciones ===\n"){
+            texto = "\n=== Actions ===\n";
+        }else if(texto == "\n=== CEDEARs ===\n"){
+            texto = "\n=== CEDEARs ===\n";
+        }else if(texto == "\n=== Bonos ===\n"){
+            texto = "\n=== Obligations ===\n";
+        }else if(texto == "\n=== Opciones ===\n"){
+            texto = "\n=== Options ===\n";
+        }else if(texto == "\n=== Cauciones ===\n"){
+            texto = "\n=== Pensions ===\n";
+        }else if(texto == "\n=== FCI ===\n"){
+            texto = "\n=== Fonds Communs ===\n";
+        }else if(texto == "\n=== ON ===\n"){
+            texto = "\n=== Obligations Negociables ===\n";
+        }else if(texto == "\n=== Portafolios ===\n"){
+            texto = "\n=== Portefeuilles ===\n";
+        }else if(texto == "\n=== DolarMEP ===\n"){
+            texto = "\n=== Dollar MEP ===\n";
+        }else if(texto == "\n=== Licitaciones ===\n"){
+            texto = "\n=== Appels d'offres ===\n";
+        }else if(texto == "1. Ver lista de activos\n"){
+            texto = "1. Voir la liste des actifs\n";
+        }else if(texto == "2. Operar\n"){
+            texto = "2. Operer\n";
+        }else if(texto == "BOT INVERSION IOL\n"){
+            texto = "BOT D'INVESTISSEMENT IOL\n";
+        }else if(texto == "1  - Estado de cuenta\n"){
+            texto = "1  - Etat du compte\n";
+        }else if(texto == "2  - Acciones\n"){
+            texto = "2  - Actions\n";
+        }else if(texto == "3  - CEDEARs\n"){
+            texto = "3  - CEDEARs\n";
+        }else if(texto == "4  - Bonos\n"){
+            texto = "4  - Obligations\n";
+        }else if(texto == "5  - Opciones\n"){
+            texto = "5  - Options\n";
+        }else if(texto == "6  - Cauciones\n"){
+            texto = "6  - Pensions\n";
+        }else if(texto == "7  - FCI\n"){
+            texto = "7  - Fonds Communs\n";
+        }else if(texto == "8  - ON\n"){
+            texto = "8  - Obligations Negociables\n";
+        }else if(texto == "9  - Portafolios\n"){
+            texto = "9  - Portefeuilles\n";
+        }else if(texto == "10 - Dolar MEP\n"){
+            texto = "10 - Dollar MEP\n";
+        }else if(texto == "11 - Licitaciones\n"){
+            texto = "11 - Appels d'offres\n";
+        }else if(texto == "12 - Configuracion\n"){
+            texto = "12 - Configuration\n";
+        }else if(texto == "13 - Salir\n"){
+            texto = "13 - Quitter\n";
+        }else if(texto == "Seleccione una opcion: "){
+            texto = "Selectionnez une option : ";
+        }else if(texto == "Cerrando sistema...\n"){
+            texto = "Fermeture du systeme...\n";
+        }else if(texto == "Ingrese usuario: "){
+            texto = "Entrez l'utilisateur : ";
+        }else if(texto == "Ingrese password: "){
+            texto = "Entrez le mot de passe : ";
+        }else if(texto == "No se pudo iniciar sesion\n"){
+            texto = "Impossible de se connecter.\n";
+        }
+    }
+
+    // 5 - ALEMAN
+    else if(conf.idioma == "de"){
+                if(texto == "No se encontro endpoint de token.\n"){
+            texto = "Token-Endpunkt wurde nicht gefunden.\n";
+        }else if(texto == "No se pudo leer token.json.\n"){
+            texto = "token.json konnte nicht gelesen werden.\n";
+        }else if(texto == "Token obtenido correctamente.\n"){
+            texto = "Token erfolgreich erhalten.\n";
+        }else if(texto == "Error al obtener token.\n"){
+            texto = "Fehler beim Abrufen des Tokens.\n";
+        }else if(texto == "Respuesta del servidor:\n"){
+            texto = "Serverantwort:\n";
+        }else if(texto == "Error en login.\n"){
+            texto = "Fehler bei der Anmeldung.\n";
+        }else if(texto == "Login exitoso.\n"){
+            texto = "Anmeldung erfolgreich.\n";
+        }else if(texto == "Simbolo: "){
+            texto = "Symbol: ";
+        }else if(texto == "Datos JSON: "){
+            texto = "JSON-Daten: ";
+        }else if(texto == "Indice de API invalido.\n"){
+            texto = "Ungueltiger API-Index.\n";
+        }else if(texto == "POST ejecutado correctamente.\n"){
+            texto = "POST erfolgreich ausgefuehrt.\n";
+        }else if(texto == "Error al ejecutar POST.\n"){
+            texto = "Fehler beim Ausfuehren von POST.\n";
+        }else if(texto == "No hay informacion para mostrar.\n"){
+            texto = "Keine Informationen zum Anzeigen.\n";
+        }else if(texto == "No se encontraron datos validos.\n"){
+            texto = "Keine gueltigen Daten gefunden.\n";
+        }else if(texto == "Cantidad: "){
+            texto = "Menge: ";
+        }else if(texto == "Simbolo invalido.\n"){
+            texto = "Ungueltiges Symbol.\n";
+        }else if(texto == "Cantidad invalida.\n"){
+            texto = "Ungueltige Menge.\n";
+        }else if(texto == "No se pudo obtener el precio.\n"){
+            texto = "Preis konnte nicht abgerufen werden.\n";
+        }else if(texto == "Saldo insuficiente.\n"){
+            texto = "Unzureichendes Guthaben.\n";
+        }else if(texto == "Endpoint invalido.\n"){
+            texto = "Ungueltiger Endpunkt.\n";
+        }else if(texto == "No posee este activo.\n"){
+            texto = "Sie besitzen diesen Vermoegenswert nicht.\n";
+        }else if(texto == "Compra realizada correctamente.\n"){
+            texto = "Kauf erfolgreich abgeschlossen.\n";
+        }else if(texto == "Error al realizar la compra.\n"){
+            texto = "Fehler beim Kauf.\n";
+        }else if(texto == "Venta realizada correctamente.\n"){
+            texto = "Verkauf erfolgreich abgeschlossen.\n";
+        }else if(texto == "Error al realizar la venta.\n"){
+            texto = "Fehler beim Verkauf.\n";
+        }else if(texto == "No posee el activo.\n"){
+            texto = "Sie besitzen den Vermoegenswert nicht.\n";
+        }else if(texto == "Compra automatica realizada.\n"){
+            texto = "Automatischer Kauf abgeschlossen.\n";
+        }else if(texto == "Error en compra automatica.\n"){
+            texto = "Fehler beim automatischen Kauf.\n";
+        }else if(texto == "Venta automatica realizada.\n"){
+            texto = "Automatischer Verkauf abgeschlossen.\n";
+        }else if(texto == "Error en venta automatica.\n"){
+            texto = "Fehler beim automatischen Verkauf.\n";
+        }else if(texto == "Opcion invalida.\n"){
+            texto = "Ungueltige Option.\n";
+        }else if(texto == "API invalida.\n"){
+            texto = "Ungueltige API.\n";
+        }else if(texto == "No se encontraron oportunidades.\n"){
+            texto = "Keine Moeglichkeiten gefunden.\n";
+        }else if(texto == "No hay operaciones registradas.\n"){
+            texto = "Keine registrierten Operationen.\n";
+        }else if(texto == "No se pudo abrir el archivo de operaciones.\n"){
+            texto = "Datei der Operationen konnte nicht geoeffnet werden.\n";
+        }else if(texto == "               HISTORIAL DE OPERACIONES\n"){
+            texto = "               OPERATIONSVERLAUF\n";
+        }else if(texto == "TIPO"){
+            texto = "TYP";
+        }else if(texto == "SIMBOLO"){
+            texto = "SYMBOL";
+        }else if(texto == "CANTIDAD"){
+            texto = "MENGE";
+        }else if(texto == "PRECIO"){
+            texto = "PREIS";
+        }else if(texto == "FECHA"){
+            texto = "DATUM";
+        }else if(texto == "\n--- OPERAR ---\n"){
+            texto = "\n--- HANDELN ---\n";
+        }else if(texto == "1. Comprar\n"){
+            texto = "1. Kaufen\n";
+        }else if(texto == "2. Vender\n"){
+            texto = "2. Verkaufen\n";
+        }else if(texto == "3. Ver operaciones\n"){
+            texto = "3. Operationen anzeigen\n";
+        }else if(texto == "4. Trading automatico\n"){
+            texto = "4. Automatischer Handel\n";
+        }else if(texto == "5. Volver\n"){
+            texto = "5. Zurueck\n";
+        }else if(texto == "Opcion: "){
+            texto = "Option: ";
+        }else if(texto == "Volviendo...\n"){
+            texto = "Zurueck...\n";
+        }else if(texto == "\n=== Acciones ===\n"){
+            texto = "\n=== Aktien ===\n";
+        }else if(texto == "\n=== CEDEARs ===\n"){
+            texto = "\n=== CEDEARs ===\n";
+        }else if(texto == "\n=== Bonos ===\n"){
+            texto = "\n=== Anleihen ===\n";
+        }else if(texto == "\n=== Opciones ===\n"){
+            texto = "\n=== Optionen ===\n";
+        }else if(texto == "\n=== Cauciones ===\n"){
+            texto = "\n=== Sicherheiten ===\n";
+        }else if(texto == "\n=== FCI ===\n"){
+            texto = "\n=== Investmentfonds ===\n";
+        }else if(texto == "\n=== ON ===\n"){
+            texto = "\n=== Unternehmensanleihen ===\n";
+        }else if(texto == "\n=== Portafolios ===\n"){
+            texto = "\n=== Portfolios ===\n";
+        }else if(texto == "\n=== DolarMEP ===\n"){
+            texto = "\n=== MEP-Dollar ===\n";
+        }else if(texto == "\n=== Licitaciones ===\n"){
+            texto = "\n=== Ausschreibungen ===\n";
+        }else if(texto == "1. Ver lista de activos\n"){
+            texto = "1. Liste der Vermoegenswerte anzeigen\n";
+        }else if(texto == "2. Operar\n"){
+            texto = "2. Handeln\n";
+        }else if(texto == "BOT INVERSION IOL\n"){
+            texto = "IOL INVESTITIONSBOT\n";
+        }else if(texto == "1  - Estado de cuenta\n"){
+            texto = "1  - Kontostand\n";
+        }else if(texto == "2  - Acciones\n"){
+            texto = "2  - Aktien\n";
+        }else if(texto == "3  - CEDEARs\n"){
+            texto = "3  - CEDEARs\n";
+        }else if(texto == "4  - Bonos\n"){
+            texto = "4  - Anleihen\n";
+        }else if(texto == "5  - Opciones\n"){
+            texto = "5  - Optionen\n";
+        }else if(texto == "6  - Cauciones\n"){
+            texto = "6  - Sicherheiten\n";
+        }else if(texto == "7  - FCI\n"){
+            texto = "7  - Investmentfonds\n";
+        }else if(texto == "8  - ON\n"){
+            texto = "8  - Unternehmensanleihen\n";
+        }else if(texto == "9  - Portafolios\n"){
+            texto = "9  - Portfolios\n";
+        }else if(texto == "10 - Dolar MEP\n"){
+            texto = "10 - MEP-Dollar\n";
+        }else if(texto == "11 - Licitaciones\n"){
+            texto = "11 - Ausschreibungen\n";
+        }else if(texto == "12 - Configuracion\n"){
+            texto = "12 - Einstellungen\n";
+        }else if(texto == "13 - Salir\n"){
+            texto = "13 - Beenden\n";
+        }else if(texto == "Seleccione una opcion: "){
+            texto = "Waehlen Sie eine Option: ";
+        }else if(texto == "Cerrando sistema...\n"){
+            texto = "System wird geschlossen...\n";
+        }else if(texto == "Ingrese usuario: "){
+            texto = "Benutzer eingeben: ";
+        }else if(texto == "Ingrese password: "){
+            texto = "Passwort eingeben: ";
+        }else if(texto == "No se pudo iniciar sesion\n"){
+            texto = "Anmeldung konnte nicht gestartet werden.\n";
+        }
+    }
+
+    // 6 - ITALIANO
+    else if(conf.idioma == "it"){
+                if(texto == "No se encontro endpoint de token.\n"){
+            texto = "Endpoint del token non trovato.\n";
+        }
+        else if(texto == "No se pudo leer token.json.\n"){
+            texto = "Impossibile leggere token.json.\n";
+        }
+        else if(texto == "Token obtenido correctamente.\n"){
+            texto = "Token ottenuto correttamente.\n";
+        }
+        else if(texto == "Error al obtener token.\n"){
+            texto = "Errore durante l'ottenimento del token.\n";
+        }
+        else if(texto == "Respuesta del servidor:\n"){
+            texto = "Risposta del server:\n";
+        }
+        else if(texto == "Error en login.\n"){
+            texto = "Errore di accesso.\n";
+        }
+        else if(texto == "Login exitoso.\n"){
+            texto = "Accesso eseguito correttamente.\n";
+        }
+        else if(texto == "Simbolo: "){
+            texto = "Simbolo: ";
+        }
+        else if(texto == "Indice de API invalido.\n"){
+            texto = "Indice API non valido.\n";
+        }
+        else if(texto == "Datos JSON: "){
+            texto = "Dati JSON: ";
+        }
+        else if(texto == "POST ejecutado correctamente.\n"){
+            texto = "POST eseguito correttamente.\n";
+        }
+        else if(texto == "Error al ejecutar POST.\n"){
+            texto = "Errore durante l'esecuzione del POST.\n";
+        }
+        else if(texto == "No hay informacion para mostrar.\n"){
+            texto = "Nessuna informazione da mostrare.\n";
+        }
+        else if(texto == "No se encontraron datos validos.\n"){
+            texto = "Nessun dato valido trovato.\n";
+        }
+        else if(texto == "Cantidad: "){
+            texto = "Quantità: ";
+        }
+        else if(texto == "Simbolo invalido.\n"){
+            texto = "Simbolo non valido.\n";
+        }
+        else if(texto == "Cantidad invalida.\n"){
+            texto = "Quantità non valida.\n";
+        }
+        else if(texto == "No se pudo obtener el precio.\n"){
+            texto = "Impossibile ottenere il prezzo.\n";
+        }
+        else if(texto == "Saldo insuficiente.\n"){
+            texto = "Saldo insufficiente.\n";
+        }
+        else if(texto == "Endpoint invalido.\n"){
+            texto = "Endpoint non valido.\n";
+        }
+        else if(texto == "No posee este activo.\n"){
+            texto = "Non possiedi questo asset.\n";
+        }
+        else if(texto == "Compra realizada correctamente.\n"){
+            texto = "Acquisto effettuato correttamente.\n";
+        }
+        else if(texto == "Error al realizar la compra.\n"){
+            texto = "Errore durante l'acquisto.\n";
+        }
+        else if(texto == "Venta realizada correctamente.\n"){
+            texto = "Vendita effettuata correttamente.\n";
+        }
+        else if(texto == "Error al realizar la venta.\n"){
+            texto = "Errore durante la vendita.\n";
+        }
+        else if(texto == "No posee el activo.\n"){
+            texto = "Non possiedi l'asset.\n";
+        }
+        else if(texto == "Compra automatica realizada.\n"){
+            texto = "Acquisto automatico effettuato.\n";
+        }
+        else if(texto == "Error en compra automatica.\n"){
+            texto = "Errore nell'acquisto automatico.\n";
+        }
+        else if(texto == "Venta automatica realizada.\n"){
+            texto = "Vendita automatica effettuata.\n";
+        }
+        else if(texto == "Error en venta automatica.\n"){
+            texto = "Errore nella vendita automatica.\n";
+        }
+        else if(texto == "Opcion invalida.\n"){
+            texto = "Opzione non valida.\n";
+        }
+        else if(texto == "API invalida.\n"){
+            texto = "API non valida.\n";
+        }
+        else if(texto == "No se encontraron oportunidades.\n"){
+            texto = "Nessuna opportunità trovata.\n";
+        }
+        else if(texto == "No hay operaciones registradas.\n"){
+            texto = "Nessuna operazione registrata.\n";
+        }
+        else if(texto == "No se pudo abrir el archivo de operaciones.\n"){
+            texto = "Impossibile aprire il file delle operazioni.\n";
+        }
+        else if(texto == "TIPO"){
+            texto = "TIPO";
+        }
+        else if(texto == "SIMBOLO"){
+            texto = "SIMBOLO";
+        }
+        else if(texto == "CANTIDAD"){
+            texto = "QUANTITÀ";
+        }
+        else if(texto == "PRECIO"){
+            texto = "PREZZO";
+        }
+        else if(texto == "FECHA"){
+            texto = "DATA";
+        }
+        else if(texto == "\n--- OPERAR ---\n"){
+            texto = "\n--- OPERARE ---\n";
+        }
+        else if(texto == "1. Comprar\n"){
+            texto = "1. Acquistare\n";
+        }
+        else if(texto == "2. Vender\n"){
+            texto = "2. Vendere\n";
+        }
+        else if(texto == "3. Ver operaciones\n"){
+            texto = "3. Visualizza operazioni\n";
+        }
+        else if(texto == "4. Trading automatico\n"){
+            texto = "4. Trading automatico\n";
+        }
+        else if(texto == "5. Volver\n"){
+            texto = "5. Tornare\n";
+        }
+        else if(texto == "Opcion: "){
+            texto = "Opzione: ";
+        }
+        else if(texto == "Volviendo...\n"){
+            texto = "Ritorno...\n";
+        }
+        else if(texto == "\n=== Acciones ===\n"){
+            texto = "\n=== Azioni ===\n";
+        }
+        else if(texto == "\n=== CEDEARs ===\n"){
+            texto = "\n=== CEDEARs ===\n";
+        }
+        else if(texto == "\n=== Bonos ===\n"){
+            texto = "\n=== Obbligazioni ===\n";
+        }
+        else if(texto == "\n=== Opciones ===\n"){
+            texto = "\n=== Opzioni ===\n";
+        }
+        else if(texto == "\n=== Cauciones ===\n"){
+            texto = "\n=== Cauzioni ===\n";
+        }
+        else if(texto == "\n=== FCI ===\n"){
+            texto = "\n=== FCI ===\n";
+        }
+        else if(texto == "\n=== ON ===\n"){
+            texto = "\n=== ON ===\n";
+        }
+        else if(texto == "\n=== Portafolios ===\n"){
+            texto = "\n=== Portafogli ===\n";
+        }
+        else if(texto == "\n=== Dolar MEP ===\n"){
+            texto = "\n=== Dollaro MEP ===\n";
+        }
+        else if(texto == "\n=== Licitaciones ===\n"){
+            texto = "\n=== Gare ===\n";
+        }
+        else if(texto == "1. Ver lista de activos\n"){
+            texto = "1. Visualizza elenco asset\n";
+        }
+        else if(texto == "2. Operar\n"){
+            texto = "2. Operare\n";
+        }
+        else if(texto == "3. Volver\n"){
+            texto = "3. Tornare\n";
+        }
+        else if(texto == "BOT INVERSION IOL\n"){
+            texto = "BOT INVESTIMENTI IOL\n";
+        }
+        else if(texto == "1  - Estado de cuenta\n"){
+            texto = "1  - Stato del conto\n";
+        }
+        else if(texto == "2  - Acciones\n"){
+            texto = "2  - Azioni\n";
+        }
+        else if(texto == "3  - CEDEARs\n"){
+            texto = "3  - CEDEARs\n";
+        }
+        else if(texto == "4  - Bonos\n"){
+            texto = "4  - Obbligazioni\n";
+        }
+        else if(texto == "5  - Opciones\n"){
+            texto = "5  - Opzioni\n";
+        }
+        else if(texto == "6  - Cauciones\n"){
+            texto = "6  - Cauzioni\n";
+        }
+        else if(texto == "7  - FCI\n"){
+            texto = "7  - FCI\n";
+        }
+        else if(texto == "8  - ON\n"){
+            texto = "8  - ON\n";
+        }
+        else if(texto == "9  - Portafolios\n"){
+            texto = "9  - Portafogli\n";
+        }
+        else if(texto == "10 - Dolar MEP\n"){
+            texto = "10 - Dollaro MEP\n";
+        }
+        else if(texto == "11 - Licitaciones\n"){
+            texto = "11 - Gare\n";
+        }
+        else if(texto == "12 - Configuracion\n"){
+            texto = "12 - Configurazione\n";
+        }
+        else if(texto == "13 - Salir\n"){
+            texto = "13 - Uscire\n";
+        }
+        else if(texto == "Seleccione una opcion: "){
+            texto = "Seleziona un'opzione: ";
+        }
+        else if(texto == "Cerrando sistema...\n"){
+            texto = "Chiusura del sistema...\n";
+        }
+        else if(texto == "Ingrese usuario: "){
+            texto = "Inserisci utente: ";
+        }
+        else if(texto == "Ingrese password: "){
+            texto = "Inserisci password: ";
+        }
+        else if(texto == "No se pudo iniciar sesion\n"){
+            texto = "Impossibile avviare la sessione\n";
+        }
+    }
+
+    // 7 - Chino
+    else if(conf.idioma == "zh"){
+                if(texto == "No se encontro endpoint de token.\n"){
+            texto = "未找到令牌端点。\n";
+        }
+        else if(texto == "No se pudo leer token.json.\n"){
+            texto = "无法读取 token.json。\n";
+        }
+        else if(texto == "Token obtenido correctamente.\n"){
+            texto = "令牌获取成功。\n";
+        }
+        else if(texto == "Error al obtener token.\n"){
+            texto = "获取令牌时出错。\n";
+        }
+        else if(texto == "Respuesta del servidor:\n"){
+            texto = "服务器响应：\n";
+        }
+        else if(texto == "Error en login.\n"){
+            texto = "登录错误。\n";
+        }
+        else if(texto == "Login exitoso.\n"){
+            texto = "登录成功。\n";
+        }
+        else if(texto == "Simbolo: "){
+            texto = "代码：";
+        }
+        else if(texto == "Indice de API invalido.\n"){
+            texto = "API 索引无效。\n";
+        }
+        else if(texto == "Datos JSON: "){
+            texto = "JSON 数据：";
+        }
+        else if(texto == "POST ejecutado correctamente.\n"){
+            texto = "POST 执行成功。\n";
+        }
+        else if(texto == "Error al ejecutar POST.\n"){
+            texto = "执行 POST 时出错。\n";
+        }
+        else if(texto == "No hay informacion para mostrar.\n"){
+            texto = "没有可显示的信息。\n";
+        }
+        else if(texto == "No se encontraron datos validos.\n"){
+            texto = "未找到有效数据。\n";
+        }
+        else if(texto == "Cantidad: "){
+            texto = "数量：";
+        }
+        else if(texto == "Simbolo invalido.\n"){
+            texto = "无效代码。\n";
+        }
+        else if(texto == "Cantidad invalida.\n"){
+            texto = "无效数量。\n";
+        }
+        else if(texto == "No se pudo obtener el precio.\n"){
+            texto = "无法获取价格。\n";
+        }
+        else if(texto == "Saldo insuficiente.\n"){
+            texto = "余额不足。\n";
+        }
+        else if(texto == "Endpoint invalido.\n"){
+            texto = "无效端点。\n";
+        }
+        else if(texto == "No posee este activo.\n"){
+            texto = "您不持有此资产。\n";
+        }
+        else if(texto == "Compra realizada correctamente.\n"){
+            texto = "购买成功完成。\n";
+        }
+        else if(texto == "Error al realizar la compra.\n"){
+            texto = "购买时出错。\n";
+        }
+        else if(texto == "Venta realizada correctamente.\n"){
+            texto = "出售成功完成。\n";
+        }
+        else if(texto == "Error al realizar la venta.\n"){
+            texto = "出售时出错。\n";
+        }
+        else if(texto == "No posee el activo.\n"){
+            texto = "您不持有该资产。\n";
+        }
+        else if(texto == "Compra automatica realizada.\n"){
+            texto = "自动购买已完成。\n";
+        }
+        else if(texto == "Error en compra automatica.\n"){
+            texto = "自动购买错误。\n";
+        }
+        else if(texto == "Venta automatica realizada.\n"){
+            texto = "自动出售已完成。\n";
+        }
+        else if(texto == "Error en venta automatica.\n"){
+            texto = "自动出售错误。\n";
+        }
+        else if(texto == "Opcion invalida.\n"){
+            texto = "无效选项。\n";
+        }
+        else if(texto == "API invalida.\n"){
+            texto = "无效 API。\n";
+        }
+        else if(texto == "No se encontraron oportunidades.\n"){
+            texto = "未发现机会。\n";
+        }
+        else if(texto == "No hay operaciones registradas.\n"){
+            texto = "没有已注册的操作。\n";
+        }
+        else if(texto == "No se pudo abrir el archivo de operaciones.\n"){
+            texto = "无法打开操作文件。\n";
+        }
+        else if(texto == "TIPO"){
+            texto = "类型";
+        }
+        else if(texto == "SIMBOLO"){
+            texto = "代码";
+        }
+        else if(texto == "CANTIDAD"){
+            texto = "数量";
+        }
+        else if(texto == "PRECIO"){
+            texto = "价格";
+        }
+        else if(texto == "FECHA"){
+            texto = "日期";
+        }
+        else if(texto == "\n--- OPERAR ---\n"){
+            texto = "\n--- 交易 ---\n";
+        }
+        else if(texto == "1. Comprar\n"){
+            texto = "1. 买入\n";
+        }
+        else if(texto == "2. Vender\n"){
+            texto = "2. 卖出\n";
+        }
+        else if(texto == "3. Ver operaciones\n"){
+            texto = "3. 查看操作\n";
+        }
+        else if(texto == "4. Trading automatico\n"){
+            texto = "4. 自动交易\n";
+        }
+        else if(texto == "5. Volver\n"){
+            texto = "5. 返回\n";
+        }
+        else if(texto == "Opcion: "){
+            texto = "选项：";
+        }
+        else if(texto == "Volviendo...\n"){
+            texto = "返回中...\n";
+        }
+        else if(texto == "\n=== Acciones ===\n"){
+            texto = "\n=== 股票 ===\n";
+        }
+        else if(texto == "\n=== CEDEARs ===\n"){
+            texto = "\n=== CEDEARs ===\n";
+        }
+        else if(texto == "\n=== Bonos ===\n"){
+            texto = "\n=== 债券 ===\n";
+        }
+        else if(texto == "\n=== Opciones ===\n"){
+            texto = "\n=== 期权 ===\n";
+        }
+        else if(texto == "\n=== Cauciones ===\n"){
+            texto = "\n=== 担保品 ===\n";
+        }
+        else if(texto == "\n=== FCI ===\n"){
+            texto = "\n=== FCI ===\n";
+        }
+        else if(texto == "\n=== ON ===\n"){
+            texto = "\n=== ON ===\n";
+        }
+        else if(texto == "\n=== Portafolios ===\n"){
+            texto = "\n=== 投资组合 ===\n";
+        }
+        else if(texto == "\n=== Dolar MEP ===\n"){
+            texto = "\n=== MEP 美元 ===\n";
+        }
+        else if(texto == "\n=== Licitaciones ===\n"){
+            texto = "\n=== 招标 ===\n";
+        }
+        else if(texto == "1. Ver lista de activos\n"){
+            texto = "1. 查看资产列表\n";
+        }
+        else if(texto == "2. Operar\n"){
+            texto = "2. 交易\n";
+        }
+        else if(texto == "3. Volver\n"){
+            texto = "3. 返回\n";
+        }
+        else if(texto == "BOT INVERSION IOL\n"){
+            texto = "IOL 投资机器人\n";
+        }
+        else if(texto == "1  - Estado de cuenta\n"){
+            texto = "1  - 账户状态\n";
+        }
+        else if(texto == "2  - Acciones\n"){
+            texto = "2  - 股票\n";
+        }
+        else if(texto == "3  - CEDEARs\n"){
+            texto = "3  - CEDEARs\n";
+        }
+        else if(texto == "4  - Bonos\n"){
+            texto = "4  - 债券\n";
+        }
+        else if(texto == "5  - Opciones\n"){
+            texto = "5  - 期权\n";
+        }
+        else if(texto == "6  - Cauciones\n"){
+            texto = "6  - 担保品\n";
+        }
+        else if(texto == "7  - FCI\n"){
+            texto = "7  - FCI\n";
+        }
+        else if(texto == "8  - ON\n"){
+            texto = "8  - ON\n";
+        }
+        else if(texto == "9  - Portafolios\n"){
+            texto = "9  - 投资组合\n";
+        }
+        else if(texto == "10 - Dolar MEP\n"){
+            texto = "10 - MEP 美元\n";
+        }
+        else if(texto == "11 - Licitaciones\n"){
+            texto = "11 - 招标\n";
+        }
+        else if(texto == "12 - Configuracion\n"){
+            texto = "12 - 设置\n";
+        }
+        else if(texto == "13 - Salir\n"){
+            texto = "13 - 退出\n";
+        }
+        else if(texto == "Seleccione una opcion: "){
+            texto = "请选择一个选项：";
+        }
+        else if(texto == "Cerrando sistema...\n"){
+            texto = "正在关闭系统...\n";
+        }
+        else if(texto == "Ingrese usuario: "){
+            texto = "输入用户名：";
+        }
+        else if(texto == "Ingrese password: "){
+            texto = "输入密码：";
+        }
+        else if(texto == "No se pudo iniciar sesion\n"){
+            texto = "无法登录\n";
+        }
+    }
+
+    // 8 - Ruso
+    else if(conf.idioma == "ru"){
+                if(texto == "No se encontro endpoint de token.\n"){
+            texto = "Конечная точка токена не найдена.\n";
+        }
+        else if(texto == "No se pudo leer token.json.\n"){
+            texto = "Не удалось прочитать token.json.\n";
+        }
+        else if(texto == "Token obtenido correctamente.\n"){
+            texto = "Токен успешно получен.\n";
+        }
+        else if(texto == "Error al obtener token.\n"){
+            texto = "Ошибка при получении токена.\n";
+        }
+        else if(texto == "Respuesta del servidor:\n"){
+            texto = "Ответ сервера:\n";
+        }
+        else if(texto == "Error en login.\n"){
+            texto = "Ошибка входа.\n";
+        }
+        else if(texto == "Login exitoso.\n"){
+            texto = "Вход выполнен успешно.\n";
+        }
+        else if(texto == "Simbolo: "){
+            texto = "Символ: ";
+        }
+        else if(texto == "Indice de API invalido.\n"){
+            texto = "Недопустимый индекс API.\n";
+        }
+        else if(texto == "Datos JSON: "){
+            texto = "Данные JSON: ";
+        }
+        else if(texto == "POST ejecutado correctamente.\n"){
+            texto = "POST успешно выполнен.\n";
+        }
+        else if(texto == "Error al ejecutar POST.\n"){
+            texto = "Ошибка при выполнении POST.\n";
+        }
+        else if(texto == "No hay informacion para mostrar.\n"){
+            texto = "Нет информации для отображения.\n";
+        }
+        else if(texto == "No se encontraron datos validos.\n"){
+            texto = "Допустимые данные не найдены.\n";
+        }
+        else if(texto == "Cantidad: "){
+            texto = "Количество: ";
+        }
+        else if(texto == "Simbolo invalido.\n"){
+            texto = "Недопустимый символ.\n";
+        }
+        else if(texto == "Cantidad invalida.\n"){
+            texto = "Недопустимое количество.\n";
+        }
+        else if(texto == "No se pudo obtener el precio.\n"){
+            texto = "Не удалось получить цену.\n";
+        }
+        else if(texto == "Saldo insuficiente.\n"){
+            texto = "Недостаточно средств.\n";
+        }
+        else if(texto == "Endpoint invalido.\n"){
+            texto = "Недопустимая конечная точка.\n";
+        }
+        else if(texto == "No posee este activo.\n"){
+            texto = "У вас нет этого актива.\n";
+        }
+        else if(texto == "Compra realizada correctamente.\n"){
+            texto = "Покупка успешно выполнена.\n";
+        }
+        else if(texto == "Error al realizar la compra.\n"){
+            texto = "Ошибка при покупке.\n";
+        }
+        else if(texto == "Venta realizada correctamente.\n"){
+            texto = "Продажа успешно выполнена.\n";
+        }
+        else if(texto == "Error al realizar la venta.\n"){
+            texto = "Ошибка при продаже.\n";
+        }
+        else if(texto == "No posee el activo.\n"){
+            texto = "У вас нет актива.\n";
+        }
+        else if(texto == "Compra automatica realizada.\n"){
+            texto = "Автоматическая покупка выполнена.\n";
+        }
+        else if(texto == "Error en compra automatica.\n"){
+            texto = "Ошибка автоматической покупки.\n";
+        }
+        else if(texto == "Venta automatica realizada.\n"){
+            texto = "Автоматическая продажа выполнена.\n";
+        }
+        else if(texto == "Error en venta automatica.\n"){
+            texto = "Ошибка автоматической продажи.\n";
+        }
+        else if(texto == "Opcion invalida.\n"){
+            texto = "Недопустимый вариант.\n";
+        }
+        else if(texto == "API invalida.\n"){
+            texto = "Недопустимый API.\n";
+        }
+        else if(texto == "No se encontraron oportunidades.\n"){
+            texto = "Возможности не найдены.\n";
+        }
+        else if(texto == "No hay operaciones registradas.\n"){
+            texto = "Нет зарегистрированных операций.\n";
+        }
+        else if(texto == "No se pudo abrir el archivo de operaciones.\n"){
+            texto = "Не удалось открыть файл операций.\n";
+        }
+        else if(texto == "TIPO"){
+            texto = "ТИП";
+        }
+        else if(texto == "SIMBOLO"){
+            texto = "СИМВОЛ";
+        }
+        else if(texto == "CANTIDAD"){
+            texto = "КОЛИЧЕСТВО";
+        }
+        else if(texto == "PRECIO"){
+            texto = "ЦЕНА";
+        }
+        else if(texto == "FECHA"){
+            texto = "ДАТА";
+        }
+        else if(texto == "\n--- OPERAR ---\n"){
+            texto = "\n--- ТОРГОВЛЯ ---\n";
+        }
+        else if(texto == "1. Comprar\n"){
+            texto = "1. Купить\n";
+        }
+        else if(texto == "2. Vender\n"){
+            texto = "2. Продать\n";
+        }
+        else if(texto == "3. Ver operaciones\n"){
+            texto = "3. Просмотреть операции\n";
+        }
+        else if(texto == "4. Trading automatico\n"){
+            texto = "4. Автоматическая торговля\n";
+        }
+        else if(texto == "5. Volver\n"){
+            texto = "5. Назад\n";
+        }
+        else if(texto == "Opcion: "){
+            texto = "Вариант: ";
+        }
+        else if(texto == "Volviendo...\n"){
+            texto = "Возврат...\n";
+        }
+        else if(texto == "\n=== Acciones ===\n"){
+            texto = "\n=== Акции ===\n";
+        }
+        else if(texto == "\n=== CEDEARs ===\n"){
+            texto = "\n=== CEDEARs ===\n";
+        }
+        else if(texto == "\n=== Bonos ===\n"){
+            texto = "\n=== Облигации ===\n";
+        }
+        else if(texto == "\n=== Opciones ===\n"){
+            texto = "\n=== Опционы ===\n";
+        }
+        else if(texto == "\n=== Cauciones ===\n"){
+            texto = "\n=== Гарантии ===\n";
+        }
+        else if(texto == "\n=== FCI ===\n"){
+            texto = "\n=== FCI ===\n";
+        }
+        else if(texto == "\n=== ON ===\n"){
+            texto = "\n=== ON ===\n";
+        }
+        else if(texto == "\n=== Portafolios ===\n"){
+            texto = "\n=== Портфели ===\n";
+        }
+        else if(texto == "\n=== Dolar MEP ===\n"){
+            texto = "\n=== Доллар MEP ===\n";
+        }
+        else if(texto == "\n=== Licitaciones ===\n"){
+            texto = "\n=== Тендеры ===\n";
+        }
+        else if(texto == "1. Ver lista de activos\n"){
+            texto = "1. Просмотреть список активов\n";
+        }
+        else if(texto == "2. Operar\n"){
+            texto = "2. Торговать\n";
+        }
+        else if(texto == "3. Volver\n"){
+            texto = "3. Назад\n";
+        }
+        else if(texto == "BOT INVERSION IOL\n"){
+            texto = "ИНВЕСТИЦИОННЫЙ БОТ IOL\n";
+        }
+        else if(texto == "1  - Estado de cuenta\n"){
+            texto = "1  - Состояние счета\n";
+        }
+        else if(texto == "2  - Acciones\n"){
+            texto = "2  - Акции\n";
+        }
+        else if(texto == "3  - CEDEARs\n"){
+            texto = "3  - CEDEARs\n";
+        }
+        else if(texto == "4  - Bonos\n"){
+            texto = "4  - Облигации\n";
+        }
+        else if(texto == "5  - Opciones\n"){
+            texto = "5  - Опционы\n";
+        }
+        else if(texto == "6  - Cauciones\n"){
+            texto = "6  - Гарантии\n";
+        }
+        else if(texto == "7  - FCI\n"){
+            texto = "7  - FCI\n";
+        }
+        else if(texto == "8  - ON\n"){
+            texto = "8  - ON\n";
+        }
+        else if(texto == "9  - Portafolios\n"){
+            texto = "9  - Портфели\n";
+        }
+        else if(texto == "10 - Dolar MEP\n"){
+            texto = "10 - Доллар MEP\n";
+        }
+        else if(texto == "11 - Licitaciones\n"){
+            texto = "11 - Тендеры\n";
+        }
+        else if(texto == "12 - Configuracion\n"){
+            texto = "12 - Настройки\n";
+        }
+        else if(texto == "13 - Salir\n"){
+            texto = "13 - Выход\n";
+        }
+        else if(texto == "Seleccione una opcion: "){
+            texto = "Выберите вариант: ";
+        }
+        else if(texto == "Cerrando sistema...\n"){
+            texto = "Закрытие системы...\n";
+        }
+        else if(texto == "Ingrese usuario: "){
+            texto = "Введите пользователя: ";
+        }
+        else if(texto == "Ingrese password: "){
+            texto = "Введите пароль: ";
+        }
+        else if(texto == "No se pudo iniciar sesion\n"){
+            texto = "Не удалось войти в систему\n";
+        }
+    }
+
+    // 9 - JAPONES
+    else if(conf.idioma == "ja"){   //日本語翻訳
+
+        if(texto == "No se encontro endpoint de token.\n"){
+            texto = "トークンエンドポイントが見つかりませんでした。\n";
+        }
+
+        else if(texto == "No se pudo leer token.json.\n"){
+            texto = "token.json を読み取れませんでした。\n";
+        }
+
+        else if(texto == "Token obtenido correctamente.\n"){
+            texto = "トークンを正常に取得しました。\n";
+        }
+
+        else if(texto == "Error al obtener token.\n"){
+            texto = "トークン取得エラー。\n";
+        }
+
+        else if(texto == "Respuesta del servidor:\n"){
+            texto = "サーバーからの応答:\n";
+        }
+
+        else if(texto == "Error en login.\n"){
+            texto = "ログインエラー。\n";
+        }
+
+        else if(texto == "Login exitoso.\n"){
+            texto = "ログイン成功。\n";
+        }
+
+        else if(texto == "Simbolo: "){
+            texto = "シンボル: ";
+        }
+
+        else if(texto == "Datos JSON: "){
+            texto = "JSONデータ: ";
+        }
+
+        else if(texto == "Indice de API invalido.\n"){
+            texto = "無効なAPIインデックス。\n";
+        }
+
+        else if(texto == "POST ejecutado correctamente.\n"){
+            texto = "POSTが正常に実行されました。\n";
+        }
+
+        else if(texto == "Error al ejecutar POST.\n"){
+            texto = "POST実行エラー。\n";
+        }
+
+        else if(texto == "No hay informacion para mostrar.\n"){
+            texto = "表示する情報がありません。\n";
+        }
+
+        else if(texto == "No se encontraron datos validos.\n"){
+            texto = "有効なデータが見つかりませんでした。\n";
+        }
+
+        else if(texto == "Cantidad: "){
+            texto = "数量: ";
+        }
+
+        else if(texto == "Simbolo invalido.\n"){
+            texto = "無効なシンボル。\n";
+        }
+
+        else if(texto == "Cantidad invalida.\n"){
+            texto = "無効な数量。\n";
+        }
+
+        else if(texto == "No se pudo obtener el precio.\n"){
+            texto = "価格を取得できませんでした。\n";
+        }
+
+        else if(texto == "Saldo insuficiente.\n"){
+            texto = "残高不足。\n";
+        }
+
+        else if(texto == "Endpoint invalido.\n"){
+            texto = "無効なエンドポイント。\n";
+        }
+
+        else if(texto == "No posee este activo.\n"){
+            texto = "この資産を保有していません。\n";
+        }
+
+        else if(texto == "Compra realizada correctamente.\n"){
+            texto = "購入が正常に完了しました。\n";
+        }
+
+        else if(texto == "Error al realizar la compra.\n"){
+            texto = "購入エラー。\n";
+        }
+
+        else if(texto == "Venta realizada correctamente.\n"){
+            texto = "売却が正常に完了しました。\n";
+        }
+
+        else if(texto == "Error al realizar la venta.\n"){
+            texto = "売却エラー。\n";
+        }
+
+        else if(texto == "No posee el activo.\n"){
+            texto = "資産を保有していません。\n";
+        }
+
+        else if(texto == "Compra automatica realizada.\n"){
+            texto = "自動購入が完了しました。\n";
+        }
+
+        else if(texto == "Error en compra automatica.\n"){
+            texto = "自動購入エラー。\n";
+        }
+
+        else if(texto == "Venta automatica realizada.\n"){
+            texto = "自動売却が完了しました。\n";
+        }
+
+        else if(texto == "Error en venta automatica.\n"){
+            texto = "自動売却エラー。\n";
+        }
+
+        else if(texto == "Opcion invalida.\n"){
+            texto = "無効なオプション。\n";
+        }
+
+        else if(texto == "API invalida.\n"){
+            texto = "無効なAPI。\n";
+        }
+
+        else if(texto == "No se encontraron oportunidades.\n"){
+            texto = "機会が見つかりませんでした。\n";
+        }
+
+        else if(texto == "No hay operaciones registradas.\n"){
+            texto = "登録された操作はありません。\n";
+        }
+
+        else if(texto == "No se pudo abrir el archivo de operaciones.\n"){
+            texto = "操作ファイルを開けませんでした。\n";
+        }
+
+        else if(texto == "\n============================================================\n"){
+            texto = "\n============================================================\n";
+        }
+
+        else if(texto == "               HISTORIAL DE OPERACIONES\n"){
+            texto = "               操作履歴\n";
+        }
+
+        else if(texto == "TIPO"){
+            texto = "タイプ";
+        }
+
+        else if(texto == "SIMBOLO"){
+            texto = "シンボル";
+        }
+
+        else if(texto == "CANTIDAD"){
+            texto = "数量";
+        }
+
+        else if(texto == "PRECIO"){
+            texto = "価格";
+        }
+
+        else if(texto == "FECHA"){
+            texto = "日付";
+        }
+
+        else if(texto == "\n--- OPERAR ---\n"){
+            texto = "\n--- 取引 ---\n";
+        }
+
+        else if(texto == "1. Comprar\n"){
+            texto = "1. 購入\n";
+        }
+
+        else if(texto == "2. Vender\n"){
+            texto = "2. 売却\n";
+        }
+
+        else if(texto == "3. Ver operaciones\n"){
+            texto = "3. 操作履歴を見る\n";
+        }
+
+        else if(texto == "4. Trading automatico\n"){
+            texto = "4. 自動取引\n";
+        }
+
+        else if(texto == "5. Volver\n"){
+            texto = "5. 戻る\n";
+        }
+
+        else if(texto == "Opcion: "){
+            texto = "オプション: ";
+        }
+
+        else if(texto == "Volviendo...\n"){
+            texto = "戻っています...\n";
+        }
+
+        else if(texto == "\n=== Acciones ===\n"){
+            texto = "\n=== 株式 ===\n";
+        }
+
+        else if(texto == "\n=== CEDEARs ===\n"){
+            texto = "\n=== CEDEARs ===\n";
+        }
+
+        else if(texto == "\n=== Bonos ===\n"){
+            texto = "\n=== 債券 ===\n";
+        }
+
+        else if(texto == "\n=== Opciones ===\n"){
+            texto = "\n=== オプション ===\n";
+        }
+
+        else if(texto == "\n=== Cauciones ===\n"){
+            texto = "\n=== 保証取引 ===\n";
+        }
+
+        else if(texto == "\n=== FCI ===\n"){
+            texto = "\n=== FCI ===\n";
+        }
+
+        else if(texto == "\n=== ON ===\n"){
+            texto = "\n=== ON ===\n";
+        }
+
+        else if(texto == "\n=== Portafolios ===\n"){
+            texto = "\n=== ポートフォリオ ===\n";
+        }
+
+        else if(texto == "\n=== Dolar MEP ===\n"){
+            texto = "\n=== MEPドル ===\n";
+        }
+
+        else if(texto == "\n=== Licitaciones ===\n"){
+            texto = "\n=== 入札 ===\n";
+        }
+
+        else if(texto == "1. Ver lista de activos\n"){
+            texto = "1. 資産一覧を見る\n";
+        }
+
+        else if(texto == "2. Operar\n"){
+            texto = "2. 取引\n";
+        }
+
+        else if(texto == "3. Volver\n"){
+            texto = "3. 戻る\n";
+        }
+
+        else if(texto == "BOT INVERSION IOL\n"){
+            texto = "IOL投資ボット\n";
+        }
+
+        else if(texto == "1  - Estado de cuenta\n"){
+            texto = "1  - 口座状況\n";
+        }
+
+        else if(texto == "2  - Acciones\n"){
+            texto = "2  - 株式\n";
+        }
+
+        else if(texto == "3  - CEDEARs\n"){
+            texto = "3  - CEDEARs\n";
+        }
+
+        else if(texto == "4  - Bonos\n"){
+            texto = "4  - 債券\n";
+        }
+
+        else if(texto == "5  - Opciones\n"){
+            texto = "5  - オプション\n";
+        }
+
+        else if(texto == "6  - Cauciones\n"){
+            texto = "6  - 保証取引\n";
+        }
+
+        else if(texto == "7  - FCI\n"){
+            texto = "7  - FCI\n";
+        }
+
+        else if(texto == "8  - ON\n"){
+            texto = "8  - ON\n";
+        }
+
+        else if(texto == "9  - Portafolios\n"){
+            texto = "9  - ポートフォリオ\n";
+        }
+
+        else if(texto == "10 - Dolar MEP\n"){
+            texto = "10 - MEPドル\n";
+        }
+
+        else if(texto == "11 - Licitaciones\n"){
+            texto = "11 - 入札\n";
+        }
+
+        else if(texto == "12 - Configuracion\n"){
+            texto = "12 - 設定\n";
+        }
+
+        else if(texto == "13 - Salir\n"){
+            texto = "13 - 終了\n";
+        }
+
+        else if(texto == "Seleccione una opcion: "){
+            texto = "オプションを選択してください: ";
+        }
+
+        else if(texto == "Cerrando sistema...\n"){
+            texto = "システムを終了しています...\n";
+        }
+
+        else if(texto == "Ingrese usuario: "){
+            texto = "ユーザー名を入力してください: ";
+        }
+
+        else if(texto == "Ingrese password: "){
+            texto = "パスワードを入力してください: ";
+        }
+
+        else if(texto == "No se pudo iniciar sesion\n"){
+            texto = "ログインできませんでした\n";
+        }
+    }
+
+    // 10 - COREANO
+    else if(conf.idioma == "ko"){   //한국어 번역
+
+        if(texto == "No se encontro endpoint de token.\n"){
+            texto = "토큰 엔드포인트를 찾을 수 없습니다.\n";
+        }
+
+        else if(texto == "No se pudo leer token.json.\n"){
+            texto = "token.json 파일을 읽을 수 없습니다.\n";
+        }
+
+        else if(texto == "Token obtenido correctamente.\n"){
+            texto = "토큰을 성공적으로 가져왔습니다.\n";
+        }
+
+        else if(texto == "Error al obtener token.\n"){
+            texto = "토큰을 가져오는 중 오류가 발생했습니다.\n";
+        }
+
+        else if(texto == "Respuesta del servidor:\n"){
+            texto = "서버 응답:\n";
+        }
+
+        else if(texto == "Error en login.\n"){
+            texto = "로그인 오류.\n";
+        }
+
+        else if(texto == "Login exitoso.\n"){
+            texto = "로그인 성공.\n";
+        }
+
+        else if(texto == "Simbolo: "){
+            texto = "심볼: ";
+        }
+
+        else if(texto == "Datos JSON: "){
+            texto = "JSON 데이터: ";
+        }
+
+        else if(texto == "Indice de API invalido.\n"){
+            texto = "잘못된 API 인덱스입니다.\n";
+        }
+
+        else if(texto == "POST ejecutado correctamente.\n"){
+            texto = "POST가 성공적으로 실행되었습니다.\n";
+        }
+
+        else if(texto == "Error al ejecutar POST.\n"){
+            texto = "POST 실행 오류.\n";
+        }
+
+        else if(texto == "No hay informacion para mostrar.\n"){
+            texto = "표시할 정보가 없습니다.\n";
+        }
+
+        else if(texto == "No se encontraron datos validos.\n"){
+            texto = "유효한 데이터를 찾을 수 없습니다.\n";
+        }
+
+        else if(texto == "Cantidad: "){
+            texto = "수량: ";
+        }
+
+        else if(texto == "Simbolo invalido.\n"){
+            texto = "잘못된 심볼입니다.\n";
+        }
+
+        else if(texto == "Cantidad invalida.\n"){
+            texto = "잘못된 수량입니다.\n";
+        }
+
+        else if(texto == "No se pudo obtener el precio.\n"){
+            texto = "가격을 가져올 수 없습니다.\n";
+        }
+
+        else if(texto == "Saldo insuficiente.\n"){
+            texto = "잔액이 부족합니다.\n";
+        }
+
+        else if(texto == "Endpoint invalido.\n"){
+            texto = "잘못된 엔드포인트입니다.\n";
+        }
+
+        else if(texto == "No posee este activo.\n"){
+            texto = "이 자산을 보유하고 있지 않습니다.\n";
+        }
+
+        else if(texto == "Compra realizada correctamente.\n"){
+            texto = "매수가 성공적으로 완료되었습니다.\n";
+        }
+
+        else if(texto == "Error al realizar la compra.\n"){
+            texto = "매수 중 오류가 발생했습니다.\n";
+        }
+
+        else if(texto == "Venta realizada correctamente.\n"){
+            texto = "매도가 성공적으로 완료되었습니다.\n";
+        }
+
+        else if(texto == "Error al realizar la venta.\n"){
+            texto = "매도 중 오류가 발생했습니다.\n";
+        }
+
+        else if(texto == "No posee el activo.\n"){
+            texto = "자산을 보유하고 있지 않습니다.\n";
+        }
+
+        else if(texto == "Compra automatica realizada.\n"){
+            texto = "자동 매수가 완료되었습니다.\n";
+        }
+
+        else if(texto == "Error en compra automatica.\n"){
+            texto = "자동 매수 오류.\n";
+        }
+
+        else if(texto == "Venta automatica realizada.\n"){
+            texto = "자동 매도가 완료되었습니다.\n";
+        }
+
+        else if(texto == "Error en venta automatica.\n"){
+            texto = "자동 매도 오류.\n";
+        }
+
+        else if(texto == "Opcion invalida.\n"){
+            texto = "잘못된 옵션입니다.\n";
+        }
+
+        else if(texto == "API invalida.\n"){
+            texto = "잘못된 API입니다.\n";
+        }
+
+        else if(texto == "No se encontraron oportunidades.\n"){
+            texto = "기회를 찾을 수 없습니다.\n";
+        }
+
+        else if(texto == "No hay operaciones registradas.\n"){
+            texto = "등록된 거래가 없습니다.\n";
+        }
+
+        else if(texto == "No se pudo abrir el archivo de operaciones.\n"){
+            texto = "거래 파일을 열 수 없습니다.\n";
+        }
+
+        else if(texto == "\n============================================================\n"){
+            texto = "\n============================================================\n";
+        }
+
+        else if(texto == "               HISTORIAL DE OPERACIONES\n"){
+            texto = "               거래 기록\n";
+        }
+
+        else if(texto == "TIPO"){
+            texto = "유형";
+        }
+
+        else if(texto == "SIMBOLO"){
+            texto = "심볼";
+        }
+
+        else if(texto == "CANTIDAD"){
+            texto = "수량";
+        }
+
+        else if(texto == "PRECIO"){
+            texto = "가격";
+        }
+
+        else if(texto == "FECHA"){
+            texto = "날짜";
+        }
+
+        else if(texto == "\n--- OPERAR ---\n"){
+            texto = "\n--- 거래 ---\n";
+        }
+
+        else if(texto == "1. Comprar\n"){
+            texto = "1. 매수\n";
+        }
+
+        else if(texto == "2. Vender\n"){
+            texto = "2. 매도\n";
+        }
+
+        else if(texto == "3. Ver operaciones\n"){
+            texto = "3. 거래 보기\n";
+        }
+
+        else if(texto == "4. Trading automatico\n"){
+            texto = "4. 자동 거래\n";
+        }
+
+        else if(texto == "5. Volver\n"){
+            texto = "5. 돌아가기\n";
+        }
+
+        else if(texto == "Opcion: "){
+            texto = "옵션: ";
+        }
+
+        else if(texto == "Volviendo...\n"){
+            texto = "돌아가는 중...\n";
+        }
+
+        else if(texto == "\n=== Acciones ===\n"){
+            texto = "\n=== 주식 ===\n";
+        }
+
+        else if(texto == "\n=== CEDEARs ===\n"){
+            texto = "\n=== CEDEARs ===\n";
+        }
+
+        else if(texto == "\n=== Bonos ===\n"){
+            texto = "\n=== 채권 ===\n";
+        }
+
+        else if(texto == "\n=== Opciones ===\n"){
+            texto = "\n=== 옵션 ===\n";
+        }
+
+        else if(texto == "\n=== Cauciones ===\n"){
+            texto = "\n=== 담보 거래 ===\n";
+        }
+
+        else if(texto == "\n=== FCI ===\n"){
+            texto = "\n=== FCI ===\n";
+        }
+
+        else if(texto == "\n=== ON ===\n"){
+            texto = "\n=== ON ===\n";
+        }
+
+        else if(texto == "\n=== Portafolios ===\n"){
+            texto = "\n=== 포트폴리오 ===\n";
+        }
+
+        else if(texto == "\n=== Dolar MEP ===\n"){
+            texto = "\n=== MEP 달러 ===\n";
+        }
+
+        else if(texto == "\n=== Licitaciones ===\n"){
+            texto = "\n=== 입찰 ===\n";
+        }
+
+        else if(texto == "1. Ver lista de activos\n"){
+            texto = "1. 자산 목록 보기\n";
+        }
+
+        else if(texto == "2. Operar\n"){
+            texto = "2. 거래\n";
+        }
+
+        else if(texto == "3. Volver\n"){
+            texto = "3. 돌아가기\n";
+        }
+
+        else if(texto == "BOT INVERSION IOL\n"){
+            texto = "IOL 투자 봇\n";
+        }
+
+        else if(texto == "1  - Estado de cuenta\n"){
+            texto = "1  - 계좌 상태\n";
+        }
+
+        else if(texto == "2  - Acciones\n"){
+            texto = "2  - 주식\n";
+        }
+
+        else if(texto == "3  - CEDEARs\n"){
+            texto = "3  - CEDEARs\n";
+        }
+
+        else if(texto == "4  - Bonos\n"){
+            texto = "4  - 채권\n";
+        }
+
+        else if(texto == "5  - Opciones\n"){
+            texto = "5  - 옵션\n";
+        }
+
+        else if(texto == "6  - Cauciones\n"){
+            texto = "6  - 담보 거래\n";
+        }
+
+        else if(texto == "7  - FCI\n"){
+            texto = "7  - FCI\n";
+        }
+
+        else if(texto == "8  - ON\n"){
+            texto = "8  - ON\n";
+        }
+
+        else if(texto == "9  - Portafolios\n"){
+            texto = "9  - 포트폴리오\n";
+        }
+
+        else if(texto == "10 - Dolar MEP\n"){
+            texto = "10 - MEP 달러\n";
+        }
+
+        else if(texto == "11 - Licitaciones\n"){
+            texto = "11 - 입찰\n";
+        }
+
+        else if(texto == "12 - Configuracion\n"){
+            texto = "12 - 설정\n";
+        }
+
+        else if(texto == "13 - Salir\n"){
+            texto = "13 - 종료\n";
+        }
+
+        else if(texto == "Seleccione una opcion: "){
+            texto = "옵션을 선택하세요: ";
+        }
+
+        else if(texto == "Cerrando sistema...\n"){
+            texto = "시스템 종료 중...\n";
+        }
+
+        else if(texto == "Ingrese usuario: "){
+            texto = "사용자 입력: ";
+        }
+
+        else if(texto == "Ingrese password: "){
+            texto = "비밀번호 입력: ";
+        }
+
+        else if(texto == "No se pudo iniciar sesion\n"){
+            texto = "로그인할 수 없습니다\n";
+        }
+    }
+
+    //Retorno
+    return texto;
 }
 
 //##### Modulo 4. #####
@@ -2843,94 +5203,92 @@ void verOperaciones(){
     archivo.close();
     mostrarPieHistorial();
 }
-//===============================================================================
-// Se han modificado y completado hasta el modulo 130, se deben seguir modificando
-// y completando (o directamente desarrollar) los modulos del 131 en adelante.
-// Este comentario solo se usa como marca par determinar hasta donde se hizo y
-// desde donde se debe seguir por lo que si se avanza de debe cambiar de lugar 
-// y modificar (o borrar si es que ya se termino).
-//===============================================================================
 
-//##### Modulo 150. #####
-//Muestra el titulo principal del sistema.
-void mostrarTituloPrincipal(){
-    cout << "\n=================================\n";
-    mostrarMensaje("BOT INVERSION IOL\n");
-    cout << "=================================\n";
+//##### Modulo 131. #####
+//Muestra el menu de operaciones.
+void mostrarMenuOperaciones(){
+    string msg;
+
+    msg = "\n--- OPERAR ---\n";
+    mostrarMensaje(msg);
+    msg = "1. Comprar\n";
+    mostrarMensaje(msg);
+    msg = "2. Vender\n";
+    mostrarMensaje(msg);
+    msg = "3. Ver operaciones\n";
+    mostrarMensaje(msg);
+    msg = "4. Trading automatico\n";
+    mostrarMensaje(msg);
+    msg = "5. Volver\n";
+    mostrarMensaje(msg);
+    msg = "Opcion: ";
+    mostrarMensaje(msg);
 }
 
-//##### Modulo 151. #####
-//Solicita una opcion numerica.
-int pedirOpcionMenu(){
+//##### Modulo 132. #####
+//Solicita una opcion del submenu de operaciones.
+int pedirOpcionOperaciones(){
     int opcion;
 
-    mostrarMensaje("Seleccione una opcion: ");
     cin >> opcion;
-    cin.ignore();
+
+    if(cin.fail()){
+        cin.clear();
+        cin.ignore(1000, '\n');
+
+        mostrarMensaje("Entrada invalida.\n");
+
+        return -1;
+    }
+
+    cin.ignore(1000, '\n');
 
     return opcion;
 }
 
-//##### Modulo 152. #####
-//Muestra un separador visual.
-void mostrarSeparadorMenu(){
-    cout << "---------------------------------\n";
+//##### Modulo 133. #####
+//Verifica que el usuario este autenticado.
+bool autenticarUsuario(){
+    if(login(&tokenRefreshToken) == false){
+        mostrarMensaje("No se pudo iniciar sesion.\n");
+        return false;
+    }
+
+    return true;
 }
 
-//##### Modulo 153. #####
-//Muestra el menu principal.
-void mostrarMenuPrincipal(){
-    mostrarTituloPrincipal();
-    mostrarMensaje("1  - Estado de cuenta\n");
-    mostrarMensaje("2  - Acciones\n");
-    mostrarMensaje("3  - CEDEARs\n");
-    mostrarMensaje("4  - Bonos\n");
-    mostrarMensaje("5  - Opciones\n");
-    mostrarMensaje("6  - Cauciones\n");
-    mostrarMensaje("7  - FCI\n");
-    mostrarMensaje("8  - ON\n");
-    mostrarMensaje("9  - Portafolios\n");
-    mostrarMensaje("10 - Dolar MEP\n");
-    mostrarMensaje("11 - Licitaciones\n");
-    mostrarMensaje("12 - Configuracion\n");
-    mostrarMensaje("13 - Salir\n");
-    mostrarSeparadorMenu();
+//##### Modulo 134. #####
+//Solicita simbolo para trading automatico.
+string pedirSimboloAutomatico(){
+    string simbolo;
+
+    simbolo = pedirSimbolo();
+    if(simbolo.empty()){
+        mostrarMensaje("Simbolo invalido.\n");
+    }
+
+    return simbolo;
 }
 
-//##### Modulo 154. #####
-//Muestra el submenu de operaciones.
-void mostrarSubmenuOperaciones(){
-    mostrarMensaje("\n--- OPERAR ---\n");
-    mostrarMensaje("1. Comprar\n");
-    mostrarMensaje("2. Vender\n");
-    mostrarMensaje("3. Ver operaciones\n");
-    mostrarMensaje("4. Trading automatico\n");
-    mostrarMensaje("5. Volver\n");
-}
-
-//##### Modulo 155. #####
-//Muestra el menu de activos.
-void mostrarMenuActivo(string nombre){
-    string titulo;
-
-    titulo = "\n=== " + nombre + " ===\n";
-    mostrarMensaje(titulo);
-    mostrarMensaje("1. Ver lista de activos\n");
-    mostrarMensaje("2. Operar\n");
-    mostrarMensaje("3. Volver\n");
-}
-
-//##### Modulo 156. #####
+//##### Modulo 135. #####
 //Ejecuta una opcion del submenu de operaciones.
-void ejecutarOpcionOperaciones(int opcion, int opcionMenu){
+void ejecutarOpcionOperacion(int opcion, int opcionMenu){
+    string simbolo;
+    int indiceApi;
+
+    indiceApi = obtenerIndiceApiOperacion(opcionMenu);
+
     switch(opcion){
         case 1:
-            compra(opcionMenu, opcionMenu, listaApis[0]);
+            if(autenticarUsuario()){
+                compra(opcionMenu, indiceApi, listaApis);
+            }
             break;
 
         case 2:
-            venta(opcionMenu, opcionMenu, listaApis[0]
-            );
+            if(autenticarUsuario()){
+                venta(opcionMenu, indiceApi, listaApis);
+            }
             break;
 
         case 3:
@@ -2938,7 +5296,12 @@ void ejecutarOpcionOperaciones(int opcion, int opcionMenu){
             break;
 
         case 4:
-            compraVentaAutomatica(pedirSimbolo(), opcionMenu, listaApis[0]);
+            if(autenticarUsuario()){
+                simbolo = pedirSimboloAutomatico();
+                if(simbolo.empty() == false){
+                    compraVentaAutomatica(simbolo, opcionMenu, listaApis);
+                }
+            }
             break;
 
         case 5:
@@ -2950,23 +5313,73 @@ void ejecutarOpcionOperaciones(int opcion, int opcionMenu){
     }
 }
 
-//##### Modulo 157. #####
-//Submenu de operaciones.
+//##### Modulo 136. #####
+//Submenu principal de operaciones.
 void submenuOperaciones(int opcionMenu){
     int opcion;
-    string refreshToken;
 
     do{
-        mostrarSubmenuOperaciones();
-        mostrarMensaje("Opcion: ");
-        cin >> opcion;
-        cin.ignore();
-        conseguirToken(&tokenRefreshToken.token, &refreshToken);
-        ejecutarOpcionOperaciones(opcion, opcionMenu);
+        mostrarMenuOperaciones();
+        opcion = pedirOpcionOperaciones();
+
+        if(opcion == -1){
+            continue;
+        }
+
+        ejecutarOpcionOperacion(opcion, opcionMenu);
     }while(opcion != 5);
 }
 
-//##### Modulo 158. #####
+//##### Modulo 137. #####
+//Muestra el menu de un tipo de activo.
+void mostrarMenuActivo(string nombre){
+    string msg;
+
+    msg = "\n=== " + nombre + " ===\n";
+    mostrarMensaje(msg);
+    msg = "1. Ver lista de activos\n";
+    mostrarMensaje(msg);
+    msg = "2. Operar\n";
+    mostrarMensaje(msg);
+    msg = "3. Volver\n";
+    mostrarMensaje(msg);
+    msg = "Opcion: ";
+    mostrarMensaje(msg);
+}
+
+//##### Modulo 138. #####
+//Solicita una opcion del menu de activos.
+int pedirOpcionActivo(){
+    int opcion;
+
+    cin >> opcion;
+
+    if(cin.fail()){
+        cin.clear();
+        cin.ignore(1000, '\n');
+        mostrarMensaje("Entrada invalida.\n");
+
+        return -1;
+    }
+
+    cin.ignore(1000, '\n');
+
+    return opcion;
+}
+
+//##### Modulo 139. #####
+//Verifica que la opcion del menu de activos sea valida.
+bool opcionMenuActivoValida(int opcion){
+    if(opcion >= 1){
+        if(opcion <= 3){
+            return true;
+        }
+    }
+
+    return false;
+}
+
+//##### Modulo 140. #####
 //Ejecuta una opcion del menu de activos.
 void ejecutarOpcionActivo(int opcion, int opcionMenu){
     switch(opcion){
@@ -2987,23 +5400,109 @@ void ejecutarOpcionActivo(int opcion, int opcionMenu){
     }
 }
 
-//##### Modulo 159. #####
-//Menu de activos.
-void menuActivo(int opcionMenu, string nombre){
+//##### Modulo 141. #####
+//Menu principal de un tipo de activo.
+void menuActivo(int opcionMenu, const string& nombre){
     int opcion;
 
     do{
         mostrarMenuActivo(nombre);
-        mostrarMensaje("Opcion: ");
-        cin >> opcion;
-        cin.ignore();
+        opcion = pedirOpcionActivo();
+
+        if(opcion == -1){
+            continue;
+        }
+
+        if(opcionMenuActivoValida(opcion) == false){
+            mostrarMensaje("Opcion invalida.\n");
+            continue;
+        }
+
         ejecutarOpcionActivo(opcion, opcionMenu);
     }while(opcion != 3);
 }
 
-//##### Modulo 160. #####
+//##### Modulo 142. #####
+//Muestra el encabezado del sistema.
+void mostrarEncabezadoPrincipal(){
+    string msg;
+    cout << "\n=================================\n";
+    msg = "BOT INVERSION IOL\n";
+    mostrarMensaje(msg);
+    cout << "=================================\n";
+}
+
+//##### Modulo 143. #####
+//Muestra las opciones del menu principal.
+void mostrarOpcionesPrincipal(){
+    string msg;
+
+    msg = "1  - Estado de cuenta\n";
+    mostrarMensaje(msg);
+    msg = "2  - Acciones\n";
+    mostrarMensaje(msg);
+    msg = "3  - CEDEARs\n";
+    mostrarMensaje(msg);
+    msg = "4  - Bonos\n";
+    mostrarMensaje(msg);
+    msg = "5  - Opciones\n";
+    mostrarMensaje(msg);
+    msg = "6  - Cauciones\n";
+    mostrarMensaje(msg);
+    msg = "7  - FCI\n";
+    mostrarMensaje(msg);
+    msg = "8  - ON\n";
+    mostrarMensaje(msg);
+    msg = "9  - Portafolios\n";
+    mostrarMensaje(msg);
+    msg = "10 - Dolar MEP\n";
+    mostrarMensaje(msg);
+    msg = "11 - Licitaciones\n";
+    mostrarMensaje(msg);
+    msg = "12 - Configuracion\n";
+    mostrarMensaje(msg);
+    msg = "13 - Salir\n";
+    mostrarMensaje(msg);
+    cout << "---------------------------------\n";
+    msg = "Seleccione una opcion: ";
+    mostrarMensaje(msg);
+}
+
+//##### Modulo 144. #####
+//Solicita una opcion del menu principal.
+int pedirOpcionPrincipal(){
+    int opcion;
+
+    cin >> opcion;
+
+    if(cin.fail()){
+        cin.clear();
+        cin.ignore(1000, '\n');
+        mostrarMensaje("Entrada invalida.\n");
+
+        return -1;
+    }
+
+    cin.ignore(1000, '\n');
+
+    return opcion;
+}
+
+//##### Modulo 145. #####
+//Verifica si la opcion del menu principal es valida.
+bool opcionPrincipalValida(int opcion){
+    if(opcion >= 1){
+        if(opcion <= 13){
+            return true;
+        }
+    }
+
+    return false;
+}
+
+//##### Modulo 146. #####
 //Ejecuta una opcion del menu principal.
-bool ejecutarOpcionPrincipal(int opcion){
+void ejecutarOpcionPrincipal(int opcion){
     switch(opcion){
         case 1:
             mostrar(1);
@@ -3055,59 +5554,81 @@ bool ejecutarOpcionPrincipal(int opcion){
 
         case 13:
             mostrarMensaje("Cerrando sistema...\n");
-
-            return false;
+            break;
 
         default:
             mostrarMensaje("Opcion invalida.\n");
     }
-
-    return true;
 }
 
-//##### Modulo 161. #####
+//##### Modulo 147. #####
 //Menu principal del sistema.
 void menuPrincipal(){
     int opcion;
-    bool continuar;
-
-    continuar = true;
 
     do{
-        mostrarMenuPrincipal();
-        opcion = pedirOpcionMenu();
-        continuar = ejecutarOpcionPrincipal(opcion);
-    }while(continuar);
+        mostrarEncabezadoPrincipal();
+        mostrarOpcionesPrincipal();
+        opcion = pedirOpcionPrincipal();
+        if(opcion == -1){
+            continue;
+        }
+
+        if(opcionPrincipalValida(opcion) == false){
+            mostrarMensaje("Opcion invalida.\n");
+            continue;
+        }
+
+        ejecutarOpcionPrincipal(opcion);
+    }while(opcion != 13);
 }
 
-//##### Modulo 162. #####
-//Solicita las credenciales del usuario.
+//##### Modulo 148. #####
+//Solicita el usuario al iniciar el sistema.
+void pedirUsuario(){
+    string msg;
+    msg = "Ingrese usuario: ";
+    mostrarMensaje(msg);
+    cin >> usuario.name;
+    cin.ignore(1000, '\n');
+}
+
+//##### Modulo 149. #####
+//Solicita la contraseña al iniciar el sistema.
+void pedirPassword(){
+    string msg;
+
+    msg = "Ingrese password: ";
+    mostrarMensaje(msg);
+    cin >> usuario.contraseña;
+    cin.ignore(1000, '\n');
+}
+
+//##### Modulo 150. #####
+//Solicita credenciales completas.
 void pedirCredenciales(){
-    mostrarMensaje("Ingrese usuario: ");
-    getline(cin, configurar[0].credenciales.usuario);
-    mostrarMensaje("Ingrese password: ");
-    getline(cin, configurar[0].credenciales.password);
+    pedirUsuario();
+    pedirPassword();
 }
 
-//##### Modulo 163. #####
-//Inicia sesion en el sistema.
-bool iniciarSesionSistema(){
-    if(login(configurar[0].credenciales.usuario, configurar[0].credenciales.password) == false){
-        mostrarMensaje("No se pudo iniciar sesion.\n");
+//##### Modulo 151. #####
+//Inicializa el sistema completo.
+bool iniciarSistema(){
+    inicializarSistema(&config, &configurar, &listApis, listaApis);
+    pedirCredenciales();
 
+    if(login(&tokenRefreshToken) == false){
+        mostrarMensaje("No se pudo iniciar sesion.\n");
         return false;
     }
 
     return true;
 }
 
-//##### Modulo 164 (modul principal main). #####
-//Inicializa y ejecuta el sistema.
+//##### Modulo 152. #####
+//Funcion principal del sistema.
 int main(){
-    inicializarSistema(&config, &configurar, &listApis, listaApis);
-    pedirCredenciales();
-
-    if(iniciarSesionSistema() == false){
+    if(iniciarSistema() == false){
         return 1;
     }
 
@@ -3115,3 +5636,11 @@ int main(){
 
     return 0;
 }
+
+//==========================================================================================
+// El codigo esta completo, se debe iniciar la fse de pruebas para corregir ver errores
+// y posteriormente corregirlos hasta el correcto funcionamiento del codigo, ademas de
+// optimizar este mismo, mejorarlo (de ser necesario) y eliminar modulos que hacen lo mismo.
+// Este comentario solo se usa como marca par determinar hasta donde se hizo y que se debe
+// hacer a continuacion.
+//==========================================================================================
